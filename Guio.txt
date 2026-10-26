@@ -1,0 +1,5 @@
+1. Adaptar el login al projecte anterior.
+2. Fer que en arrancar el programa s'obri la part de login.
+3. En per login obrir l'aplicació.
+
+4. Començar projecta...
