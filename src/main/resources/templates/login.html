@@ -7,6 +7,8 @@
 </head>
 <body>
 
+<h1>Inicia sessió</h1>
+
 <form action="/login" method="post" th:object="${loginForm}">
     <div>
         <input type="text" th:field="*{username}" placeholder="Usuari">
@@ -22,6 +24,7 @@
 </form>
 
 <p th:if="${message}" th:text="${message}" style="color: red;"></p>
+<p>Encara no tens usuari? <a th:href="@{/register}">Registra't</a></p>
 
 <script th:src="@{/js/script.js}"></script>
 </body>

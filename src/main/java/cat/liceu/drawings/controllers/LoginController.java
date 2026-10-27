@@ -9,12 +9,38 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 public class LoginController {
 
     @Autowired
     LoginService loginService;
+
+    @GetMapping("/register")
+    public String register(Model model) {
+        model.addAttribute("loginForm", new LoginForm());
+        return "register";
+    }
+
+    @PostMapping("/register")
+    public String registerPost(@Valid @ModelAttribute("loginForm") LoginForm loginForm,
+                               BindingResult result,
+                               Model model,
+                               RedirectAttributes redirectAttributes) {
+        if (result.hasErrors()) {
+            return "register";
+        }
+
+        boolean registered = loginService.registerUser(loginForm.getUsername(), loginForm.getPassword());
+        if (!registered) {
+            model.addAttribute("message", "Aquest usuari ja existeix");
+            return "register";
+        }
+
+        redirectAttributes.addFlashAttribute("message", "Usuari registrat correctament. Ja pots iniciar sessió.");
+        return "redirect:/login";
+    }
 
     @GetMapping({"/", "/login"})
     public String login(Model model) {
