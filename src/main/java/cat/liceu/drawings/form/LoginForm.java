@@ -6,7 +6,7 @@ import jakarta.validation.constraints.Size;
 public class LoginForm {
 
     @NotBlank(message = "L'usuari és obligatori")
-    @Size(min = 2, max = 10, message = "Ha de ser entre 2 i 10 characters")
+    @Size(min = 5, max = 10, message = "Ha de ser entre 5 i 10 characters")
     private String username;
 
     @NotBlank(message = "La contrasenya és obligatòria")

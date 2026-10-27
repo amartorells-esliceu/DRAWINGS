@@ -15,7 +15,7 @@ public class UserRepoImpl implements UserRepo {
         // Usuari de prova
         User u = new User();
         u.setUsername("admin");
-        u.setPassword("1234");
+        u.setPassword("123456");
         users.add(u);
     }
 
