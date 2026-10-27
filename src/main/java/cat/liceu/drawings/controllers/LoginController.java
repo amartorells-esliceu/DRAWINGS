@@ -1,6 +1,7 @@
 package cat.liceu.drawings.controllers;
 
 import cat.liceu.drawings.form.LoginForm;
+import cat.liceu.drawings.form.RegisterForm;
 import cat.liceu.drawings.service.LoginService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -19,12 +20,12 @@ public class LoginController {
 
     @GetMapping("/register")
     public String register(Model model) {
-        model.addAttribute("loginForm", new LoginForm());
+        model.addAttribute("registerForm", new RegisterForm());
         return "register";
     }
 
     @PostMapping("/register")
-    public String registerPost(@Valid @ModelAttribute("loginForm") LoginForm loginForm,
+    public String registerPost(@Valid @ModelAttribute("registerForm") RegisterForm registerForm,
                                BindingResult result,
                                Model model,
                                RedirectAttributes redirectAttributes) {
@@ -32,7 +33,12 @@ public class LoginController {
             return "register";
         }
 
-        boolean registered = loginService.registerUser(loginForm.getUsername(), loginForm.getPassword());
+        boolean registered = loginService.registerUser(
+                registerForm.getName(),
+                registerForm.getUsername(),
+                registerForm.getPassword()
+        );
+
         if (!registered) {
             model.addAttribute("message", "Aquest usuari ja existeix");
             return "register";
@@ -43,7 +49,10 @@ public class LoginController {
     }
 
     @GetMapping({"/", "/login"})
-    public String login(Model model) {
+    public String login(HttpSession session, Model model) {
+        if (session.getAttribute("username") != null) {
+            return "redirect:/main";
+        }
         model.addAttribute("loginForm", new LoginForm());
         return "login";
     }
@@ -62,22 +71,29 @@ public class LoginController {
         String password = loginForm.getPassword();
 
         if (loginService.checkLogin(username, password)) {
-            System.out.printf("L'usuari %s ha iniciat sessió correctament.%n", username);
             session.setAttribute("username", username);
             return "redirect:/main";
         }
 
-        model.addAttribute("message", "User/pass incorrect");
+        model.addAttribute("message", "Usuari o contrasenya incorrectes");
         return "login";
     }
 
     @GetMapping("/main")
-    public String privatePage(HttpSession session) {
+    public String privatePage(HttpSession session, Model model) {
         String username = (String) session.getAttribute("username");
 
         if (username == null) {
             return "redirect:/login";
         }
+
+        model.addAttribute("username", username);
         return "main";
+    }
+
+    @GetMapping("/logout")
+    public String logout(HttpSession session) {
+        session.invalidate();
+        return "redirect:/login";
     }
 }

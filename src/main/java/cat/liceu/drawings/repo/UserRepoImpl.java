@@ -12,11 +12,17 @@ public class UserRepoImpl implements UserRepo {
     private final List<User> users = new ArrayList<>();
 
     public UserRepoImpl() {
-        // Usuari de prova
-        User u = new User();
-        u.setUsername("admin");
-        u.setPassword("123456");
-        users.add(u);
+        User u1 = new User();
+        u1.setName("Administrador");
+        u1.setUsername("admin");
+        u1.setPassword("123456");
+        users.add(u1);
+
+        User u2 = new User();
+        u2.setName("Andreu Martorell");
+        u2.setUsername("Andreu");
+        u2.setPassword("654321");
+        users.add(u2);
     }
 
     @Override

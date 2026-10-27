@@ -7,6 +7,7 @@
 </head>
 <body>
     <h2>Aquesta és la web</h2>
+    <p>Benvingut, <span th:text="${username}">Usuari</span>! | <a th:href="@{/logout}">Tancar sessió</a></p>
     <script th:src="@{/js/script.js}"></script>
 </body>
 </html>

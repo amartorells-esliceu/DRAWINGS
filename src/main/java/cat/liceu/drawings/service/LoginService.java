@@ -19,12 +19,13 @@ public class LoginService {
         return password.equals(u.getPassword());
     }
 
-    public boolean registerUser(String username, String password) {
+    public boolean registerUser(String name, String username, String password) {
         if (userRepo.findByUsername(username) != null) {
             return false;
         }
 
         User user = new User();
+        user.setName(name);
         user.setUsername(username);
         user.setPassword(password);
         userRepo.save(user);
