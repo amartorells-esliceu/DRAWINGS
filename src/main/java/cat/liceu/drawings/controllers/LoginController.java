@@ -16,7 +16,7 @@ public class LoginController {
     @Autowired
     LoginService loginService;
 
-    @GetMapping("/login")
+    @GetMapping({"/", "/login"})
     public String login(Model model) {
         model.addAttribute("loginForm", new LoginForm());
         return "login";
@@ -38,20 +38,20 @@ public class LoginController {
         if (loginService.checkLogin(username, password)) {
             System.out.printf("L'usuari %s ha iniciat sessió correctament.%n", username);
             session.setAttribute("username", username);
-            return "redirect:/private";
+            return "redirect:/main";
         }
 
         model.addAttribute("message", "User/pass incorrect");
         return "login";
     }
 
-    @GetMapping("/private")
+    @GetMapping("/main")
     public String partPrivada(HttpSession session) {
         String username = (String) session.getAttribute("username");
 
         if (username == null) {
             return "redirect:/login";
         }
-        return "private";
+        return "main";
     }
 }
