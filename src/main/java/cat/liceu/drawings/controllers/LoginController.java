@@ -46,7 +46,7 @@ public class LoginController {
     }
 
     @GetMapping("/main")
-    public String partPrivada(HttpSession session) {
+    public String privatePage(HttpSession session) {
         String username = (String) session.getAttribute("username");
 
         if (username == null) {

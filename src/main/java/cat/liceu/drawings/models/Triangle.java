@@ -1,22 +1,22 @@
 package cat.liceu.drawings.models;
 
-public class Triangle extends GeometricFigures {
-    private int mida;
+public class Triangle extends GeometricFigure {
+    private int size;
 
     public Triangle() {
         super();
     }
 
-    public Triangle(String nom, String color, int x, int y, int mida) {
-        super(nom, color, x, y);
-        this.mida = mida;
+    public Triangle(String name, String color, int x, int y, int size) {
+        super(name, color, x, y);
+        this.size = size;
     }
 
-    public int getMida() {
-        return mida;
+    public int getSize() {
+        return size;
     }
 
-    public void setMida(int mida) {
-        this.mida = mida;
+    public void setSize(int size) {
+        this.size = size;
     }
 }

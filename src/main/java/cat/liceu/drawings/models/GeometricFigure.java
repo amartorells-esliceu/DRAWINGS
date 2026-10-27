@@ -1,27 +1,27 @@
 package cat.liceu.drawings.models;
 
-public abstract class GeometricFigures {
-    private String nom;
+public abstract class GeometricFigure {
+    private String name;
     private String color;
     private int x;
     private int y;
 
-    public GeometricFigures() {
+    public GeometricFigure() {
     }
 
-    public GeometricFigures(String nom, String color, int x, int y) {
-        this.nom = nom;
+    public GeometricFigure(String name, String color, int x, int y) {
+        this.name = name;
         this.color = color;
         this.x = x;
         this.y = y;
     }
 
-    public String getNom() {
-        return nom;
+    public String getName() {
+        return name;
     }
 
-    public void setNom(String nom) {
-        this.nom = nom;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getColor() {

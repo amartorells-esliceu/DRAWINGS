@@ -3,7 +3,7 @@ package cat.liceu.drawings.models;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Freehand extends GeometricFigures {
+public class Freehand extends GeometricFigure {
 
     public static class Point {
         private int x;
@@ -34,26 +34,26 @@ public class Freehand extends GeometricFigures {
         }
     }
 
-    private List<Point> punts = new ArrayList<>();
+    private List<Point> points = new ArrayList<>();
 
     public Freehand() {
         super();
     }
 
-    public Freehand(String nom, String color, int x, int y, List<Point> punts) {
-        super(nom, color, x, y);
-        this.punts = punts;
+    public Freehand(String name, String color, int x, int y, List<Point> points) {
+        super(name, color, x, y);
+        this.points = points;
     }
 
-    public List<Point> getPunts() {
-        return punts;
+    public List<Point> getPoints() {
+        return points;
     }
 
-    public void setPunts(List<Point> punts) {
-        this.punts = punts;
+    public void setPoints(List<Point> points) {
+        this.points = points;
     }
 
-    public void addPunt(int x, int y) {
-        this.punts.add(new Point(x, y));
+    public void addPoint(int x, int y) {
+        this.points.add(new Point(x, y));
     }
 }
