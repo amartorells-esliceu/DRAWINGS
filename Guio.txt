@@ -1,3 +1,21 @@
 GUIA DEL PROJECTE DRAWINGS
+==========================
 
-1. DrawingService, DrawingController.
+Tasques pendents de la part Java
+--------------------------------
+
+1. Completar el servei de dibuixos (DrawingService)
+   Implementar la creació i actualització de dibuixos, assignar un nom aleatori si no se'n proporciona cap,
+   consultar els dibuixos propis i els d'altres usuaris, cercar dibuixos per ID i permetre esborrar només
+   els dibuixos de l'usuari propietari.
+
+2. Completar el controlador de dibuixos (DrawingController)
+   Implementar les rutes per obrir l'editor, desar dibuixos, consultar l'historial i esborrar dibuixos,
+   comprovant l'autenticació de l'usuari amb HttpSession.
+
+3. Crear les vistes de l'editor i de l'historial
+   Afegir les plantilles editor.html i history.html, necessàries perquè funcionin les rutes corresponents.
+
+4. Resoldre la deserialització de figures
+   Definir com s'indica el tipus de figura al JSON perquè el servidor pugui reconstruir correctament les
+   figures concretes (Circle, Square, Star, etc.) a partir de la classe abstracta GeometricFigure.
