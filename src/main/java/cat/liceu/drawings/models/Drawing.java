@@ -6,22 +6,22 @@ import java.util.List;
 
 public class Drawing {
     private String id;
-    private String nom;
-    private String usernamePropietari;
+    private String name;
+    private String ownerUsername;
     private List<GeometricFigure> figures = new ArrayList<>();
-    private LocalDateTime dataCreacio;
-    private LocalDateTime dataModificacio;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 
     public Drawing() {
     }
 
-    public Drawing(String id, String nom, String usernamePropietari, List<GeometricFigure> figures) {
+    public Drawing(String id, String name, String ownerUsername, List<GeometricFigure> figures) {
         this.id = id;
-        this.nom = nom;
-        this.usernamePropietari = usernamePropietari;
+        this.name = name;
+        this.ownerUsername = ownerUsername;
         this.figures = figures;
-        this.dataCreacio = LocalDateTime.now();
-        this.dataModificacio = LocalDateTime.now();
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
     }
 
     public String getId() {
@@ -32,20 +32,20 @@ public class Drawing {
         this.id = id;
     }
 
-    public String getNom() {
-        return nom;
+    public String getName() {
+        return name;
     }
 
-    public void setNom(String nom) {
-        this.nom = nom;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public String getUsernamePropietari() {
-        return usernamePropietari;
+    public String getOwnerUsername() {
+        return ownerUsername;
     }
 
-    public void setUsernamePropietari(String usernamePropietari) {
-        this.usernamePropietari = usernamePropietari;
+    public void setOwnerUsername(String ownerUsername) {
+        this.ownerUsername = ownerUsername;
     }
 
     public List<GeometricFigure> getFigures() {
@@ -56,19 +56,19 @@ public class Drawing {
         this.figures = figures;
     }
 
-    public LocalDateTime getDataCreacio() {
-        return dataCreacio;
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
     }
 
-    public void setDataCreacio(LocalDateTime dataCreacio) {
-        this.dataCreacio = dataCreacio;
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 
-    public LocalDateTime getDataModificacio() {
-        return dataModificacio;
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
     }
 
-    public void setDataModificacio(LocalDateTime dataModificacio) {
-        this.dataModificacio = dataModificacio;
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
     }
 }
