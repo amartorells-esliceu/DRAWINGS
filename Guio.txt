@@ -14,9 +14,14 @@ Tasques pendents de la part Java
    Implementar les rutes per obrir l'editor, desar dibuixos, consultar l'historial i esborrar dibuixos,
    comprovant l'autenticació de l'usuari amb HttpSession.
 
-5. Crear les vistes de l'editor i de l'historial
+4. Crear les vistes de l'editor i de l'historial
    Afegir les plantilles editor.html i history.html, necessàries perquè funcionin les rutes corresponents.
 
-6. Resoldre la deserialització de figures
+5. Resoldre la deserialització de figures
    Definir com s'indica el tipus de figura al JSON perquè el servidor pugui reconstruir correctament les
    figures concretes (Circle, Square, Star, etc.) a partir de la classe abstracta GeometricFigure.
+
+6. Implementar el JavaScript del canvas (script.js)
+   Programar tot el fitxer script.js per controlar el canvas HTML5: dibuixar figures, afegir-les amb els
+   botons, seleccionar-les, moure-les, esborrar-les, guardar automàticament amb AJAX al servidor i
+   gestionar les accions de desfer/refer.
