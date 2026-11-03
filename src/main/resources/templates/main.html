@@ -3,11 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <title>Main</title>
-    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/auth.css}">
+    <link rel="stylesheet" th:href="@{/css/main.css}">
 </head>
 <body>
-    <h2>Aquesta és la web</h2>
+    <h2>DRAWINGS</h2>
     <p>Benvingut, <span th:text="${username}">Usuari</span>! | <a th:href="@{/logout}">Tancar sessió</a></p>
+
+    <nav>
+        <ul>
+            <li><a th:href="@{/drawings/editor}">Crear un nou dibuix</a></li>
+            <li><a th:href="@{/drawings/history}">Veure l'historial de dibuixos</a></li>
+        </ul>
+    </nav>
+
     <script th:src="@{/js/script.js}"></script>
 </body>
 </html>

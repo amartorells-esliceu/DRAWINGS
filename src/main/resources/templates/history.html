@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ca" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Historial de dibuixos</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<header>
+    <h1>Historial de dibuixos</h1>
+    <p>
+        Usuari: <strong th:text="${username}"></strong> |
+        <a th:href="@{/main}">Menú principal</a> |
+        <a th:href="@{/drawings/editor}">Nou dibuix</a> |
+        <a th:href="@{/logout}">Tancar sessió</a>
+    </p>
+</header>
+
+<section>
+    <h2>Els meus dibuixos</h2>
+    <p th:if="${#lists.isEmpty(myDrawings)}">Encara no has desat cap dibuix.</p>
+    <ul class="drawing-list">
+        <li th:each="drawing : ${myDrawings}">
+            <strong th:text="${drawing.name}"></strong>
+            <a th:href="@{/drawings/editor(id=${drawing.id})}">Editar</a>
+            <form th:action="@{/drawings/delete}" method="post">
+                <input type="hidden" name="id" th:value="${drawing.id}">
+                <button type="submit">Eliminar</button>
+            </form>
+        </li>
+    </ul>
+</section>
+
+<section>
+    <h2>Dibuixos de la resta</h2>
+    <p th:if="${#lists.isEmpty(othersDrawings)}">No hi ha dibuixos d'altres usuaris.</p>
+    <ul class="drawing-list">
+        <li th:each="drawing : ${othersDrawings}">
+            <strong th:text="${drawing.name}"></strong>
+            <span>de <span th:text="${drawing.ownerUsername}"></span></span>
+            <a th:href="@{/drawings/editor(id=${drawing.id})}">Veure</a>
+        </li>
+    </ul>
+</section>
+</body>
+</html>

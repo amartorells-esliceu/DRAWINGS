@@ -1,0 +1,29 @@
+h2 {
+    text-align: center;
+}
+
+nav ul {
+    padding: 0;
+    list-style: none;
+}
+
+nav li {
+    margin: 12px 0;
+}
+
+nav a {
+    display: block;
+    padding: 8px;
+    background: #007bff;
+    color: white;
+    text-align: center;
+    text-decoration: none;
+}
+
+nav a:hover {
+    background: #1d5a9b;
+}
+
+p {
+    text-align: center;
+}

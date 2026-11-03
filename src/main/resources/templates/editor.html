@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ca" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Editor de Dibuix</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+
+    <script th:inline="javascript">
+        let drawingId = /*[[${drawing?.id}]]*/ null;
+        let drawingName = /*[[${drawing?.name}]]*/ '';
+        const initialFigures = /*[[${drawing?.figures}]]*/ [];
+        const canEdit = /*[[${canEdit}]]*/ true;
+    </script>
+</head>
+<body>
+
+<header>
+    <h2>Editor de Dibuix</h2>
+    <p>
+        Usuari: <strong th:text="${username}"></strong> |
+        <a th:href="@{/main}">Menú principal</a> |
+        <a th:href="@{/drawings/history}">Historial</a> |
+        <a th:href="@{/logout}">Tancar sessió</a>
+    </p>
+</header>
+
+<section class="controls" th:if="${canEdit}">
+    <label for="inputNom">Nom del dibuix:</label>
+    <input type="text" id="inputNom" placeholder="Nom del dibuix..." th:value="${drawing != null ? drawing.name : ''}">
+
+    <button id="btnSave">💾 Guardar ara</button>
+    <button id="btnUndo">↩️ Desfer</button>
+    <button id="btnRedo">↪️ Refer</button>
+    <span id="saveStatus" style="color: gray; margin-left: 10px;"></span>
+</section>
+
+<hr>
+
+<div class="editor-layout">
+    <div class="sidebar" th:if="${canEdit}">
+        <h3>Afegir figura</h3>
+        <button id="btnAddCircle">🔵 Cercle</button>
+        <button id="btnAddSquare">🟦 Quadrat</button>
+        <button id="btnAddTriangle">🔺 Triangle</button>
+        <button id="btnAddStar">⭐ Estrella</button>
+        <br><br>
+        <label for="inputColor">Color:</label>
+        <input type="color" id="inputColor" value="#0000ff">
+        <br><br>
+        <button id="btnDeleteSelected" style="color: red;">🗑️ Eliminar seleccionada</button>
+    </div>
+
+    <main class="canvas-wrap">
+        <p th:if="${!canEdit}">Aquest dibuix és només de lectura.</p>
+        <canvas id="canvas" width="800" height="500"></canvas>
+    </main>
+</div>
+
+<script th:src="@{/js/script.js}"></script>
+</body>
+</html>

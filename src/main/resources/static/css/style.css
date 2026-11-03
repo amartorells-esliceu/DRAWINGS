@@ -1,0 +1,80 @@
+body {
+    max-width: 1000px;
+    margin: 32px auto;
+    padding: 0 16px;
+    font-family: sans-serif;
+    color: #222;
+}
+
+a {
+    color: #1769aa;
+}
+
+button, input {
+    padding: 7px;
+    font: inherit;
+}
+
+button {
+    cursor: pointer;
+}
+
+.controls, .sidebar, section {
+    margin: 16px 0;
+}
+
+.controls {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.editor-layout {
+    display: flex;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.sidebar {
+    display: grid;
+    align-content: start;
+    gap: 8px;
+    min-width: 150px;
+}
+
+.sidebar h3 {
+    margin: 0 0 4px;
+}
+
+.canvas-wrap {
+    flex: 1;
+    min-width: 0;
+}
+
+#canvas {
+    display: block;
+    width: 100%;
+    height: auto;
+    border: 1px solid #888;
+    background: white;
+}
+
+.drawing-list {
+    padding: 0;
+    list-style: none;
+}
+
+.drawing-list li {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid #ddd;
+}
+
+.drawing-list form {
+    margin: 0;
+}
