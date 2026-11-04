@@ -31,29 +31,25 @@ public class DrawingService {
         return null;
     }
 
-    // 2. Obtenir l'historial de dibuixos propis
     public List<Drawing> getMyDrawings(String username) {
-        // TODO: Demana al repositori tots els dibuixos que pertanyen a l'usuari autenticat.
-        return null;
+        return drawingRepo.findByUsername(username);
     }
 
-    // 3. Obtenir l'historial de dibuixos de la resta d'usuaris
     public List<Drawing> getOthersDrawings(String username) {
-        // TODO: Demana al repositori tots els dibuixos que NO pertanyen a l'usuari en sessió.
-        return null;
+        return drawingRepo.findAllExceptUsername(username);
     }
 
-    // 4. Obtenir un dibuix concret pel seu ID (per carregar-lo a l'editor visual)
     public Drawing getDrawingById(String id) {
-        // TODO: Cerca al repositori el dibuix que coincideix amb aquest ID i el retorna.
-        return null;
+        return drawingRepo.findById(id);
     }
 
-    // 5. Esborrar un dibuix de l'historial propi
     public boolean deleteDrawing(String id, String username) {
-        // TODO: Comprova si el dibuix existeix i pertany a l'usuari en sessió.
-        // TODO: Si és així, crida al repositori per eliminar-lo i retorna true.
-        // TODO: Si no pertany a l'usuari o no existeix, no el remagatzemis/eliminis i retorna false.
-        return false;
+        Drawing drawing = drawingRepo.findById(id);
+        if (drawing == null || !username.equals(drawing.getOwnerUsername())) {
+            return false;
+        }
+
+        drawingRepo.deleteByIdAndUsername(id, username);
+        return true;
     }
 }

@@ -3,25 +3,29 @@ GUIA DEL PROJECTE DRAWINGS
 
 Tasques pendents de la part Java
 --------------------------------
-1. Enviar la informació del front al back, per crear els objectes.
 
-2. Completar el servei de dibuixos (DrawingService)
-   Implementar la creació i actualització de dibuixos, assignar un nom aleatori si no se'n proporciona cap,
-   consultar els dibuixos propis i els d'altres usuaris, cercar dibuixos per ID i permetre esborrar només
-   els dibuixos de l'usuari propietari.
+[ ] 1. Completar el desat i l'actualització de dibuixos a DrawingService
+    - Si el nom és buit, generar-ne un per defecte.
+    - Si és un dibuix nou, crear-lo amb un ID únic, l'usuari propietari i les figures rebudes.
+    - Si ja existeix, comprovar que pertany a l'usuari autenticat abans d'actualitzar-lo.
+    - Actualitzar el nom, les figures i la data de modificació, i desar el dibuix al repositori.
 
-3. Completar el controlador de dibuixos (DrawingController)
-   Implementar les rutes per obrir l'editor, desar dibuixos, consultar l'historial i esborrar dibuixos,
-   comprovant l'autenticació de l'usuari amb HttpSession.
+[ ] 2. Completar l'endpoint POST /drawings/save a DrawingController
+    - Rebutjar les peticions sense sessió autenticada amb HTTP 401.
+    - Passar l'ID, el nom, l'usuari de la sessió i les figures al servei.
+    - Retornar el dibuix desat amb una resposta HTTP correcta.
+    - Gestionar els errors de dades o de permisos sense donar el desat per correcte.
 
-4. Crear les vistes de l'editor i de l'historial
-   Afegir les plantilles editor.html i history.html, necessàries perquè funcionin les rutes corresponents.
+[ ] 3. Definir la deserialització de les figures rebudes en JSON
+    - El servidor ha de poder distingir Circle, Square, Triangle, Star i Freehand.
+    - Acordar el format del camp que identifica el tipus amb el JavaScript.
+    - Comprovar que el JSON de cada figura es converteix al model Java corresponent.
 
-5. Resoldre la deserialització de figures
-   Definir com s'indica el tipus de figura al JSON perquè el servidor pugui reconstruir correctament les
-   figures concretes (Circle, Square, Star, etc.) a partir de la classe abstracta GeometricFigure.
+[ ] 4. Afegir proves de la funcionalitat de dibuixos
+    - Crear i actualitzar dibuixos; comprovar el nom per defecte i les figures desades.
+    - Verificar que un usuari no pot modificar ni eliminar dibuixos d'un altre.
+    - Provar les respostes de l'endpoint de desat amb sessió i sense.
+    - Provar el processament de les diferents classes de figura.
 
-6. Implementar el JavaScript del canvas (script.js)
-   Programar tot el fitxer script.js per controlar el canvas HTML5: dibuixar figures, afegir-les amb els
-   botons, seleccionar-les, moure-les, esborrar-les, guardar automàticament amb AJAX al servidor i
-   gestionar les accions de desfer/refer.
+Nota: la implementació del canvas i la resta de la lògica del navegador
+corresponen al JavaScript i no formen part d'aquesta llista.

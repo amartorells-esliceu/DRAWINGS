@@ -51,7 +51,7 @@ public class LoginController {
     @GetMapping({"/", "/login"})
     public String login(HttpSession session, Model model) {
         if (session.getAttribute("username") != null) {
-            return "redirect:/main";
+            return "redirect:/drawings/editor";
         }
         model.addAttribute("loginForm", new LoginForm());
         return "login";
@@ -72,23 +72,11 @@ public class LoginController {
 
         if (loginService.checkLogin(username, password)) {
             session.setAttribute("username", username);
-            return "redirect:/main";
+            return "redirect:/drawings/editor";
         }
 
         model.addAttribute("message", "Usuari o contrasenya incorrectes");
         return "login";
-    }
-
-    @GetMapping("/main")
-    public String privatePage(HttpSession session, Model model) {
-        String username = (String) session.getAttribute("username");
-
-        if (username == null) {
-            return "redirect:/login";
-        }
-
-        model.addAttribute("username", username);
-        return "main";
     }
 
     @GetMapping("/logout")

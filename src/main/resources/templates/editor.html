@@ -5,12 +5,6 @@
     <title>Editor de Dibuix</title>
     <link rel="stylesheet" th:href="@{/css/style.css}">
 
-    <script th:inline="javascript">
-        let drawingId = /*[[${drawing?.id}]]*/ null;
-        let drawingName = /*[[${drawing?.name}]]*/ '';
-        const initialFigures = /*[[${drawing?.figures}]]*/ [];
-        const canEdit = /*[[${canEdit}]]*/ true;
-    </script>
 </head>
 <body>
 
@@ -18,8 +12,7 @@
     <h2>Editor de Dibuix</h2>
     <p>
         Usuari: <strong th:text="${username}"></strong> |
-        <a th:href="@{/main}">Menú principal</a> |
-        <a th:href="@{/drawings/history}">Historial</a> |
+        <a class="button" th:href="@{/drawings/history}">Historial</a> |
         <a th:href="@{/logout}">Tancar sessió</a>
     </p>
 </header>
@@ -43,6 +36,7 @@
         <button id="btnAddSquare">🟦 Quadrat</button>
         <button id="btnAddTriangle">🔺 Triangle</button>
         <button id="btnAddStar">⭐ Estrella</button>
+        <button id="btnAddFreehand">✏️ Lliure</button>
         <br><br>
         <label for="inputColor">Color:</label>
         <input type="color" id="inputColor" value="#0000ff">
