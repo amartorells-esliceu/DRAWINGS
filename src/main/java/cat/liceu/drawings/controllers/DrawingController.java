@@ -43,7 +43,6 @@ public class DrawingController {
 
     // 2. Endpoint REST per a l'auto-guardat automàtic des de JavaScript (AJAX)
     @PostMapping("/save")
-    @ResponseBody
     public ResponseEntity<?> saveDrawing(@RequestBody DrawingDTO request, HttpSession session) {
         // TODO: Comprovar si l'usuari té la sessió activa. Si no en té, retornar un ResponseEntity.status(401).body("No autoritzat").
 
