@@ -1,4 +1,0 @@
-- Controllers
-- RepoImpl
-- Services
-- Templates
