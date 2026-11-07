@@ -4,6 +4,8 @@ GUIA DEL PROJECTE DRAWINGS
 Tasques pendents de la part Java
 --------------------------------
 
+POSAR MODO PER FER LINEAS!!!
+
 [ ] 1. Completar el desat i l'actualització de dibuixos a DrawingService
     - Si el nom és buit, generar-ne un per defecte.
     - Si és un dibuix nou, crear-lo amb un ID únic, l'usuari propietari i les figures rebudes.

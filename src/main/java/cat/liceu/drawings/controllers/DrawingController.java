@@ -47,6 +47,9 @@ public class DrawingController {
         // TODO: Comprovar si l'usuari té la sessió activa. Si no en té, retornar un ResponseEntity.status(401).body("No autoritzat").
 
         // TODO: Cridar a drawingService.saveDrawing(...) passant l'ID, el nom del dibuix, l'usuari en sessió i la llista de figures.
+        // TODO: Revisar com obtenir el username
+        Drawing drawingGuardat = drawingService.saveDrawing(request.getId(), request.getNom(), session.getAttribute("username").toString(), request.getFigures());
+
 
         // TODO: Retornar ResponseEntity.ok(drawingGuardat) amb l'objecte de dibuix actualitzat.
         return null;
