@@ -61,16 +61,12 @@ public class DrawingRepoImpl implements DrawingRepo {
     public void deleteByIdAndUsername(String id, String username) {
         if (id == null || username == null) return;
 
-        Drawing drawingToDelete = null;
-        for (Drawing d : drawings) {
+        for (int i = 0; i < drawings.size(); i++) {
+            Drawing d = drawings.get(i);
             if (id.equals(d.getId()) && username.equals(d.getOwnerUsername())) {
-                drawingToDelete = d;
+                drawings.remove(i);
                 break;
             }
-        }
-
-        if (drawingToDelete != null) {
-            drawings.remove(drawingToDelete);
         }
     }
 }
