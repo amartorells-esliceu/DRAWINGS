@@ -20,9 +20,13 @@ public class DrawingController {
     @Autowired
     private DrawingService drawingService;
 
+    private String getUsername(HttpSession session) {
+        return (String) session.getAttribute("username");
+    }
+
     @GetMapping("/editor")
     public String editor(@RequestParam(required = false) String id, HttpSession session, Model model) {
-        String username = (String) session.getAttribute("username");
+        String username = getUsername(session);
         if (username == null) {
             return "redirect:/login";
         }
@@ -41,23 +45,26 @@ public class DrawingController {
         return "editor";
     }
 
-    // 2. Endpoint REST per a l'auto-guardat automàtic des de JavaScript (AJAX)
     @PostMapping("/save")
     public ResponseEntity<?> saveDrawing(@RequestBody DrawingDTO request, HttpSession session) {
-        // TODO: Comprovar si l'usuari té la sessió activa. Si no en té, retornar un ResponseEntity.status(401).body("No autoritzat").
+        String username = getUsername(session);
 
-        // TODO: Cridar a drawingService.saveDrawing(...) passant l'ID, el nom del dibuix, l'usuari en sessió i la llista de figures.
-        // TODO: Revisar com obtenir el username
-        Drawing drawingGuardat = drawingService.saveDrawing(request.getId(), request.getNom(), session.getAttribute("username").toString(), request.getFigures());
+        if (username == null){
+            return ResponseEntity.status(401).body("No autoritzat");
+        }
 
+        Drawing savedDrawing = drawingService.saveDrawing(request.getId(), request.getName(), username, request.getFigures());
 
-        // TODO: Retornar ResponseEntity.ok(drawingGuardat) amb l'objecte de dibuix actualitzat.
-        return null;
+        if (savedDrawing == null) {
+            return ResponseEntity.status(403).body("Accés denegat o dibuix no trobat");
+        }
+
+        return ResponseEntity.ok(savedDrawing);
     }
 
     @GetMapping("/history")
     public String history(HttpSession session, Model model) {
-        String username = (String) session.getAttribute("username");
+        String username = getUsername(session);
         if (username == null) {
             return "redirect:/login";
         }
@@ -70,7 +77,7 @@ public class DrawingController {
 
     @PostMapping("/delete")
     public String deleteDrawing(@RequestParam String id, HttpSession session) {
-        String username = (String) session.getAttribute("username");
+        String username = getUsername(session);
         if (username == null) {
             return "redirect:/login";
         }

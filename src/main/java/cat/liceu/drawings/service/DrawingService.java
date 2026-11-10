@@ -15,52 +15,39 @@ public class DrawingService {
     @Autowired
     private DrawingRepo drawingRepo;
 
-    // 1. Guardar o actualitzar un dibuix
-    public Drawing saveDrawing(String id, String nom, String username, List<GeometricFigure> figures) {
-        // TODO: Comprovar si el nom ve buit. Si està buit, generar un nom aleatori (ex: "Dibuix-4829").
+    public Drawing saveDrawing(String id, String name, String username, List<GeometricFigure> figures) {
 
-        // TODO: Si l'ID NO ve buit (és una edició):
-        //       - Cerca el dibuix existent al repositori pel seu ID.
-        //       - Comprova que existeixi i que el seu propietari sigui l'usuari actual en sessió.
-        //       - Actualitza el seu nom, la seva llista de figures i la data de modificació (LocalDateTime.now()).
-        updateDrawing(id, nom, username, figures);
+        if (name == null || name.isEmpty()){
+            name = "Dibuix sense nom";
+        }
 
-        // TODO: Si l'ID VE buit (és un dibuix nou):
-        //       - Genera un nou ID únic (p. ex. UUID.randomUUID().toString()).
-        //       - Instancia un nou objecte Drawing amb l'ID, el nom, l'usuari i les figures.
-        createDrawing(id, nom, username, figures);
-
-        // TODO: Envia el dibuix al repositori (drawingRepo.save) per desar-lo en memòria i retorna l'objecte Drawing.
-        return null;
-    }
-
-    // TODO: Si l'ID NO ve buit (és una edició):
-    //       - Cerca el dibuix existent al repositori pel seu ID.
-    //       - Comprova que existeixi i que el seu propietari sigui l'usuari actual en sessió.
-    //       - Actualitza el seu nom, la seva llista de figures i la data de modificació (LocalDateTime.now()).
-    private void updateDrawing(String id, String nom, String username, List<GeometricFigure> figures){
-        Drawing dibuixExistent = drawingRepo.findById(id);
-
-        if(dibuixExistent != null){
-
-            dibuixExistent.setName(nom);
-            dibuixExistent.setFigures(figures);
-            dibuixExistent.setUpdatedAt(LocalDateTime.now());
-            drawingRepo.save(dibuixExistent);
+        if (id == null || id.isEmpty()){
+            return createDrawing(name, username, figures);
+        } else {
+            return updateDrawing(id, name, username, figures);
         }
     }
 
-    // TODO: Si l'ID VE buit (és un dibuix nou):
-    //       - Genera un nou ID únic (p. ex. UUID.randomUUID().toString()).
-    //       - Instancia un nou objecte Drawing amb l'ID, el nom, l'usuari i les figures.
-    private void createDrawing(String id, String nom, String username, List<GeometricFigure> figures){
-        //Genera un nou ID únic
+    private Drawing updateDrawing(String id, String name, String username, List<GeometricFigure> figures){
+        Drawing existingDrawing = drawingRepo.findById(id);
 
-        //Crear nova instancia
-        Drawing dibuix = new Drawing(id, nom, username, figures); //Actualitza dates
+        if (existingDrawing != null && username.equals(existingDrawing.getOwnerUsername())) {
+            existingDrawing.setName(name);
+            existingDrawing.setFigures(figures);
+            existingDrawing.setUpdatedAt(LocalDateTime.now());
+            drawingRepo.save(existingDrawing);
+        }
+        return existingDrawing;
+    }
 
-        //Cridar al repositori
-        drawingRepo.save(dibuix);
+    private Drawing createDrawing(String name, String username, List<GeometricFigure> figures){
+        String id = java.util.UUID.randomUUID().toString();
+
+        Drawing drawing = new Drawing(id, name, username, figures);
+
+        drawingRepo.save(drawing);
+
+        return drawing;
     }
 
     public List<Drawing> getMyDrawings(String username) {

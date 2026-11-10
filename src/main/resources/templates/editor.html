@@ -18,8 +18,8 @@
 </header>
 
 <section class="controls" th:if="${canEdit}">
-    <label for="inputNom">Nom del dibuix:</label>
-    <input type="text" id="inputNom" placeholder="Nom del dibuix..." th:value="${drawing != null ? drawing.name : ''}">
+    <label for="inputName">Nom del dibuix:</label>
+    <input type="text" id="inputName" placeholder="Nom del dibuix..." th:value="${drawing != null ? drawing.name : ''}">
 
     <button id="btnSave">💾 Guardar ara</button>
     <button id="btnUndo">↩️ Desfer</button>
