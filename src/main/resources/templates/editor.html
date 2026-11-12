@@ -17,15 +17,16 @@
     </p>
 </header>
 
-<section class="controls" th:if="${canEdit}">
+<form class="controls" id="drawingForm" th:if="${canEdit}">
     <label for="inputName">Nom del dibuix:</label>
-    <input type="text" id="inputName" placeholder="Nom del dibuix..." th:value="${drawing != null ? drawing.name : ''}">
+    <input type="text" id="inputName" name="inputName" placeholder="Nom del dibuix..." th:value="${drawing != null ? drawing.name : ''}">
+    <input type="hidden" id="inputDrawingId" name="inputDrawingId" th:value="${drawing != null ? drawing.id : ''}">
 
-    <button id="btnSave">💾 Guardar ara</button>
-    <button id="btnUndo">↩️ Desfer</button>
-    <button id="btnRedo">↪️ Refer</button>
+    <button id="btnSave" type="submit">💾 Guardar ara</button>
+    <button id="btnUndo" type="button">↩️ Desfer</button>
+    <button id="btnRedo" type="button">↪️ Refer</button>
     <span id="saveStatus" style="color: gray; margin-left: 10px;"></span>
-</section>
+</form>
 
 <hr>
 
@@ -51,6 +52,6 @@
     </main>
 </div>
 
-<script th:src="@{/js/script.js}"></script>
+<script th:src="@{/js/editor.js}"></script>
 </body>
 </html>
