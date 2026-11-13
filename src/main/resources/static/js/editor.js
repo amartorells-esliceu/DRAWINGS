@@ -26,8 +26,7 @@ function drawFigure(figure) {
     ctx.strokeStyle = figure.color;
 
     if (figure.type === "FREEHAND" || figure.type === "POINTS") {
-        const points = figure.points || [];
-        if (points.length === 0) return;
+        const points = figure.points;
 
         ctx.lineWidth = 3;
         ctx.beginPath();
@@ -74,17 +73,13 @@ function drawFigure(figure) {
             }
         }
         ctx.closePath();
-    } else {
-        return;
     }
 
     ctx.fill();
 }
 
 // Carrega les figures desades en obrir l'editor.
-if (typeof initialFigures !== "undefined" && Array.isArray(initialFigures)) {
-    figures = initialFigures;
-}
+figures = initialFigures || [];
 redraw();
 
 const form = document.getElementById("drawingForm");
@@ -107,15 +102,9 @@ if (form) {
 
         const response = await fetch("/drawings/save", {
             method: "POST",
-            credentials: "same-origin",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(dto)
         });
-
-        if (response.status === 401) {
-            saveStatus.textContent = "La sessió ha caducat. Torna a iniciar sessió.";
-            return;
-        }
 
         if (!response.ok) {
             saveStatus.textContent = `Error al desar el dibuix (${response.status}).`;
@@ -204,7 +193,6 @@ document.getElementById("btnAddCircle").addEventListener("click", function() {
 
     // Tanca el traç a mà alçada.
     canvas.addEventListener("mouseup", function() {
-        if (currentType !== "FREEHAND") return;
         isDrawing = false;
         currentFreehandFigure = null;
     });
