@@ -42,8 +42,12 @@
         <br><br>
         <label for="inputColor">Color:</label>
         <input type="color" id="inputColor" value="#0000ff">
+        <div class="sidebar-field">
+            <label for="inputSize">Mida:</label>
+            <input type="number" id="inputSize" name="inputSize" min="1" value="50">
+        </div>
         <br><br>
-        <button id="btnDeleteSelected" style="color: red;">🗑️ Eliminar seleccionada</button>
+        <button id="btnDeleteSelected" style="color: red;">🗑️ Eliminar dibuix!</button>
     </div>
 
     <main class="canvas-wrap">
@@ -52,6 +56,11 @@
     </main>
 </div>
 
+<script th:inline="javascript">
+    const initialFigures = /*[[${drawing != null ? drawing.figures : null}]]*/ null;
+</script>
+
 <script th:src="@{/js/editor.js}"></script>
+<script th:src="@{/js/tool-selection.js}"></script>
 </body>
 </html>

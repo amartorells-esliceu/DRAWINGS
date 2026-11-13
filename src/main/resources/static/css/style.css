@@ -62,6 +62,23 @@ button {
     margin: 0 0 4px;
 }
 
+.sidebar-field {
+    display: grid;
+    gap: 4px;
+}
+
+.sidebar-field input {
+    box-sizing: border-box;
+    width: 100%;
+}
+
+.sidebar button.active {
+    background: #dbeafe;
+    border-color: #1769aa;
+    box-shadow: 0 0 0 1px #1769aa;
+    color: #123b5d;
+}
+
 .canvas-wrap {
     flex: 1;
     min-width: 0;
