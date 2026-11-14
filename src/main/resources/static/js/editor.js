@@ -1,17 +1,15 @@
-// Carrega les figures desades i inicialitza l'estat de l'editor.
+// =========================================================
+// 1. VARIABLES GLOBALS I ELEMENTS DE LA PÀGINA
+// =========================================================
 let figures = initialFigures || [];
 let selectedFigure = null;
-let isDragging = false;
 let currentType = "CIRCLE";
+let isDragging = false;
 let isDrawing = false;
 let currentFreehandFigure = null;
 let currentPointsFigure = null;
-let isSaving = false;
-let saveAgain = false;
-let canvasChanged = false;
-let editStartState = null;
-let dragStartState = null;
-let dragChanged = false;
+
+// Piles per a Desfer (Undo) i Refer (Redo)
 const undoStack = [];
 const redoStack = [];
 
@@ -24,8 +22,11 @@ const inputCanvasWidth = document.getElementById("inputCanvasWidth");
 const inputCanvasHeight = document.getElementById("inputCanvasHeight");
 const figureList = document.getElementById("figureList");
 
-// Desa en una instantània les dades que formen el dibuix.
-function getEditorState() {
+
+// =========================================================
+// 2. DESFER I REFER (UNDO / REDO)
+// =========================================================
+function obtenirEstatActual() {
     return JSON.stringify({
         figures: figures,
         width: canvas.width,
@@ -34,44 +35,24 @@ function getEditorState() {
     });
 }
 
-function rememberState() {
-    editStartState = null;
-    undoStack.push(getEditorState());
-    redoStack.length = 0;
+// Cridem aquesta funció JUST ABANS de modificar el dibuix
+function guardarPasUndo() {
+    undoStack.push(obtenirEstatActual());
+    redoStack.length = 0; // En fer un canvi nou, es buida el "Refer"
 }
 
-function startEdit() {
-    editStartState = getEditorState();
-}
+function aplicarEstat(estatJson) {
+    const estat = JSON.parse(estatJson);
+    figures = estat.figures;
+    canvas.width = estat.width;
+    canvas.height = estat.height;
 
-function finishEdit() {
-    if (editStartState === null) return;
+    if (form) form.inputName.value = estat.name;
+    if (inputCanvasWidth) inputCanvasWidth.value = estat.width;
+    if (inputCanvasHeight) inputCanvasHeight.value = estat.height;
 
-    const previousState = editStartState;
-    editStartState = null;
-    if (previousState !== getEditorState()) {
-        undoStack.push(previousState);
-        redoStack.length = 0;
-        saveDrawing();
-    }
-}
-
-// Restaura una instantània i la desa al servidor.
-function restoreState(snapshot) {
-    const state = JSON.parse(snapshot);
-    figures = state.figures;
-    canvas.width = state.width;
-    canvas.height = state.height;
-    if (form) form.inputName.value = state.name;
-    if (inputCanvasWidth) inputCanvasWidth.value = state.width;
-    if (inputCanvasHeight) inputCanvasHeight.value = state.height;
     selectedFigure = null;
     currentPointsFigure = null;
-    isDragging = false;
-    isDrawing = false;
-    currentFreehandFigure = null;
-    canvasChanged = false;
-    editStartState = null;
     redraw();
     renderFigureList();
     saveDrawing();
@@ -79,17 +60,22 @@ function restoreState(snapshot) {
 
 function undoDrawing() {
     if (undoStack.length === 0) return;
-    redoStack.push(getEditorState());
-    restoreState(undoStack.pop());
+    redoStack.push(obtenirEstatActual());
+    const anterior = undoStack.pop();
+    aplicarEstat(anterior);
 }
 
 function redoDrawing() {
     if (redoStack.length === 0) return;
-    undoStack.push(getEditorState());
-    restoreState(redoStack.pop());
+    undoStack.push(obtenirEstatActual());
+    const seguent = redoStack.pop();
+    aplicarEstat(seguent);
 }
 
-// Converteix la posició del ratolí a les coordenades internes del canvas.
+
+// =========================================================
+// 3. DIBUIXAR AL CANVAS I LLISTA LATERAL
+// =========================================================
 function getMousePos(event) {
     const rect = canvas.getBoundingClientRect();
     return {
@@ -98,7 +84,6 @@ function getMousePos(event) {
     };
 }
 
-// Esborra el canvas i torna a dibuixar totes les figures.
 function redraw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -109,7 +94,6 @@ function redraw() {
         ctx.strokeStyle = fig.color;
         ctx.lineWidth = 3;
 
-        // Dibuixa les figures bàsiques a partir del centre i de la mida.
         if (fig.type === "CIRCLE") {
             ctx.beginPath();
             ctx.arc(fig.x, fig.y, half, 0, Math.PI * 2);
@@ -130,19 +114,14 @@ function redraw() {
                 const angle = (j * Math.PI / 7) - (Math.PI / 2);
                 const x = fig.x + Math.cos(angle) * radius;
                 const y = fig.y + Math.sin(angle) * radius;
-
-                if (j === 0) {
-                    ctx.moveTo(x, y);
-                } else {
-                    ctx.lineTo(x, y);
-                }
+                if (j === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
             }
             ctx.closePath();
             ctx.fill();
         } else if (fig.type === "FREEHAND" || fig.type === "POINTS") {
             if (!fig.points || fig.points.length === 0) continue;
 
-            // En el mode per punts, mostra cada coordenada com un punt.
             if (fig.type === "POINTS") {
                 for (let j = 0; j < fig.points.length; j++) {
                     ctx.beginPath();
@@ -151,7 +130,6 @@ function redraw() {
                 }
             }
 
-            // Uneix els punts per dibuixar el traç o la línia.
             ctx.beginPath();
             ctx.moveTo(fig.points[0].x, fig.points[0].y);
             for (let j = 1; j < fig.points.length; j++) {
@@ -160,7 +138,7 @@ function redraw() {
             ctx.stroke();
         }
 
-        // Marca les figures bàsiques seleccionades amb un rectangle discontinu.
+        // Marca la figura seleccionada amb un requadre discontinu
         if (fig === selectedFigure && fig.x !== undefined) {
             ctx.strokeStyle = "#000000";
             ctx.lineWidth = 1;
@@ -171,7 +149,6 @@ function redraw() {
     }
 }
 
-// Crea un camp de text per a cada figura de la llista.
 function renderFigureList() {
     if (!figureList) return;
     figureList.innerHTML = "";
@@ -191,195 +168,157 @@ function renderFigureList() {
             input.style.border = "2px solid #007bff";
         }
 
-        // El focus selecciona la figura sense recrear la llista.
+        // En fer clic a l'input de la llista, seleccionem la figura
         input.addEventListener("focus", function() {
-            startEdit();
             selectedFigure = fig;
             if (inputColor) inputColor.value = fig.color;
             if (inputSize && fig.size) inputSize.value = fig.size;
             redraw();
-
-            for (let j = 0; j < figureList.children.length; j++) {
-                const listInput = figureList.children[j].firstChild;
-                listInput.style.fontWeight = listInput === input ? "bold" : "";
-                listInput.style.border = listInput === input ? "2px solid #007bff" : "";
-            }
         });
 
-        // Desa el nom cada vegada que s'edita el camp.
-        input.addEventListener("input", function() {
+        // En acabar d'escriure el nom nou, guardem pas Undo i desem al servidor
+        input.addEventListener("change", function() {
+            guardarPasUndo();
             fig.name = input.value;
+            renderFigureList();
+            saveDrawing();
         });
-        input.addEventListener("change", finishEdit);
 
         li.appendChild(input);
         figureList.appendChild(li);
     }
 }
 
-// Mostra les figures i els seus noms en obrir l'editor.
-redraw();
-renderFigureList();
 
-// Desa l'estat actual; si ja hi ha un desament en curs, desa els canvis en acabar.
+// =========================================================
+// 4. DESAR AL SERVIDOR (FETCH)
+// =========================================================
 async function saveDrawing() {
     if (!form) return;
-    if (isSaving) {
-        saveAgain = true;
-        return;
-    }
 
-    isSaving = true;
+    const id = form.inputDrawingId.value;
+    const dto = {
+        id: id !== "" ? id : null,
+        name: form.inputName.value,
+        figures: figures,
+        width: canvas.width,
+        height: canvas.height
+    };
+
     const saveStatus = document.getElementById("saveStatus");
+    saveStatus.textContent = "Desant...";
 
     try {
-        do {
-            saveAgain = false;
-            const id = form.inputDrawingId.value;
-            const dto = {
-                id: id !== "" ? id : null,
-                name: form.inputName.value,
-                figures: figures,
-                width: canvas.width,
-                height: canvas.height
-            };
+        const response = await fetch("/drawings/save", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(dto)
+        });
 
-            saveStatus.textContent = "Desant...";
-            const response = await fetch("/drawings/save", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(dto)
-            });
+        if (!response.ok) {
+            saveStatus.textContent = "Error al desar (" + response.status + ").";
+            return;
+        }
 
-            if (!response.ok) {
-                saveStatus.textContent = `Error al desar el dibuix (${response.status}).`;
-                return;
-            }
+        const data = await response.json();
+        form.inputDrawingId.value = data.id;
+        form.inputName.value = data.name;
+        saveStatus.textContent = "Desat!";
 
-            const data = await response.json();
-            form.inputDrawingId.value = data.id;
-            if (form.inputName.value === dto.name) form.inputName.value = data.name;
-            saveStatus.textContent = "Dibuix desat correctament!";
-
-            if (id === "") {
-                window.history.pushState({}, "", "/drawings/editor?id=" + data.id);
-            }
-        } while (saveAgain);
+        // Si era un dibuix nou, actualitzem l'URL sense recarregar
+        if (id === "") {
+            window.history.pushState({}, "", "/drawings/editor?id=" + data.id);
+        }
     } catch (error) {
-        saveStatus.textContent = "Error al desar el dibuix.";
-        console.error("No s'ha pogut desar el dibuix:", error);
-    } finally {
-        isSaving = false;
+        saveStatus.textContent = "Error de connexió al desar.";
     }
 }
 
+
+// =========================================================
+// 5. ESDEVENIMENTS DELS CONTROLS I DEL CANVAS
+// =========================================================
+function seleccionarEina(tipus, idBoto) {
+    currentType = tipus;
+    currentPointsFigure = null;
+    selectedFigure = null;
+    redraw();
+    renderFigureList();
+
+    // Marca visualment el botó actiu amb la classe CSS "active"
+    const botons = document.querySelectorAll(".sidebar button");
+    for (let i = 0; i < botons.length; i++) {
+        botons[i].classList.remove("active");
+    }
+    const botoActiu = document.getElementById(idBoto);
+    if (botoActiu) botoActiu.classList.add("active");
+}
+
 if (form) {
-    // El botó de desament manual també utilitza la funció comuna.
     form.addEventListener("submit", function(event) {
         event.preventDefault();
         saveDrawing();
     });
 
-    // Desa el canvi de nom del dibuix quan l'usuari acaba d'editar-lo.
-    form.inputName.addEventListener("focus", startEdit);
-    form.inputName.addEventListener("change", finishEdit);
+    form.inputName.addEventListener("change", function() {
+        guardarPasUndo();
+        saveDrawing();
+    });
 
     document.getElementById("btnUndo").addEventListener("click", undoDrawing);
     document.getElementById("btnRedo").addEventListener("click", redoDrawing);
 
-    // Cada botó activa una eina diferent.
-    document.getElementById("btnAddCircle").addEventListener("click", function() {
-        currentType = "CIRCLE";
-        currentPointsFigure = null;
-        selectedFigure = null;
-        redraw();
-        renderFigureList();
-    });
+    document.getElementById("btnAddCircle").addEventListener("click", function() { seleccionarEina("CIRCLE", "btnAddCircle"); });
+    document.getElementById("btnAddSquare").addEventListener("click", function() { seleccionarEina("SQUARE", "btnAddSquare"); });
+    document.getElementById("btnAddTriangle").addEventListener("click", function() { seleccionarEina("TRIANGLE", "btnAddTriangle"); });
+    document.getElementById("btnAddStar").addEventListener("click", function() { seleccionarEina("STAR", "btnAddStar"); });
+    document.getElementById("btnAddFreehand").addEventListener("click", function() { seleccionarEina("FREEHAND", "btnAddFreehand"); });
+    document.getElementById("btnAddPoints").addEventListener("click", function() { seleccionarEina("POINTS", "btnAddPoints"); });
 
-    document.getElementById("btnAddSquare").addEventListener("click", function() {
-        currentType = "SQUARE";
-        currentPointsFigure = null;
-        selectedFigure = null;
-        redraw();
-        renderFigureList();
-    });
-
-    document.getElementById("btnAddTriangle").addEventListener("click", function() {
-        currentType = "TRIANGLE";
-        currentPointsFigure = null;
-        selectedFigure = null;
-        redraw();
-        renderFigureList();
-    });
-
-    document.getElementById("btnAddStar").addEventListener("click", function() {
-        currentType = "STAR";
-        currentPointsFigure = null;
-        selectedFigure = null;
-        redraw();
-        renderFigureList();
-    });
-
-    document.getElementById("btnAddFreehand").addEventListener("click", function() {
-        currentType = "FREEHAND";
-        currentPointsFigure = null;
-        selectedFigure = null;
-        redraw();
-        renderFigureList();
-    });
-
-    document.getElementById("btnAddPoints").addEventListener("click", function() {
-        currentType = "POINTS";
-        currentPointsFigure = null;
-        selectedFigure = null;
-        redraw();
-        renderFigureList();
-    });
-
-    // Canvia les dimensions lògiques del canvas.
-    inputCanvasWidth.addEventListener("focus", startEdit);
-    inputCanvasWidth.addEventListener("input", function() {
+    // Dimensions del canvas
+    inputCanvasWidth.addEventListener("change", function() {
         const width = Number(inputCanvasWidth.value);
         if (Number.isInteger(width) && width > 0) {
+            guardarPasUndo();
             canvas.width = width;
             redraw();
+            saveDrawing();
         }
     });
-    inputCanvasWidth.addEventListener("change", finishEdit);
 
-    inputCanvasHeight.addEventListener("focus", startEdit);
-    inputCanvasHeight.addEventListener("input", function() {
+    inputCanvasHeight.addEventListener("change", function() {
         const height = Number(inputCanvasHeight.value);
         if (Number.isInteger(height) && height > 0) {
+            guardarPasUndo();
             canvas.height = height;
             redraw();
+            saveDrawing();
         }
     });
-    inputCanvasHeight.addEventListener("change", finishEdit);
 
-    // El color s'aplica a la figura seleccionada; la mida, només a les bàsiques.
-    inputColor.addEventListener("focus", startEdit);
-    inputColor.addEventListener("input", function() {
+    // Canvi de color i mida de la figura seleccionada
+    inputColor.addEventListener("change", function() {
         if (selectedFigure) {
+            guardarPasUndo();
             selectedFigure.color = inputColor.value;
             redraw();
+            saveDrawing();
         }
     });
-    inputColor.addEventListener("change", finishEdit);
 
-    inputSize.addEventListener("focus", startEdit);
-    inputSize.addEventListener("input", function() {
+    inputSize.addEventListener("change", function() {
         if (selectedFigure && selectedFigure.x !== undefined) {
+            guardarPasUndo();
             selectedFigure.size = Number(inputSize.value) || 50;
             redraw();
+            saveDrawing();
         }
     });
-    inputSize.addEventListener("change", finishEdit);
 
-    // Elimina la figura seleccionada.
+    // Eliminar seleccionada
     document.getElementById("btnDeleteSelected").addEventListener("click", function() {
         if (!selectedFigure) return;
-        rememberState();
+        guardarPasUndo();
 
         for (let i = 0; i < figures.length; i++) {
             if (figures[i] === selectedFigure) {
@@ -394,9 +333,11 @@ if (form) {
         saveDrawing();
     });
 
-    // Elimina totes les figures.
+    // Esborrar-ho tot
     document.getElementById("btnDeleteAll").addEventListener("click", function() {
-        if (figures.length > 0) rememberState();
+        if (figures.length === 0) return;
+        guardarPasUndo();
+
         figures = [];
         selectedFigure = null;
         currentPointsFigure = null;
@@ -405,28 +346,23 @@ if (form) {
         saveDrawing();
     });
 
-    // Selecciona una figura existent o en crea una de nova.
+    // Clic al canvas: seleccionar o crear figura
     canvas.addEventListener("mousedown", function(event) {
-        finishEdit();
         const pos = getMousePos(event);
-        canvasChanged = false;
         let clicked = null;
 
-        // Busca una figura dins del radi del clic, començant per l'última dibuixada.
         for (let i = figures.length - 1; i >= 0; i--) {
             const fig = figures[i];
-            if (fig.x !== undefined &&
-                Math.hypot(pos.x - fig.x, pos.y - fig.y) <= (fig.size || 50) / 2) {
+            if (fig.x !== undefined && Math.hypot(pos.x - fig.x, pos.y - fig.y) <= (fig.size || 50) / 2) {
                 clicked = fig;
                 break;
             }
         }
 
         if (clicked) {
+            guardarPasUndo();
             selectedFigure = clicked;
             isDragging = true;
-            dragStartState = getEditorState();
-            dragChanged = false;
             inputColor.value = clicked.color;
             inputSize.value = clicked.size || 50;
             redraw();
@@ -434,13 +370,10 @@ if (form) {
             return;
         }
 
-        // Les figures a mà alçada i per punts no es poden seleccionar ni moure.
         selectedFigure = null;
-        renderFigureList();
+        guardarPasUndo();
 
         if (currentType === "FREEHAND") {
-            // Desa cada posició del ratolí per formar el traç lliure.
-            rememberState();
             isDrawing = true;
             currentFreehandFigure = {
                 name: "Traç " + (figures.length + 1),
@@ -449,11 +382,8 @@ if (form) {
                 points: [pos]
             };
             figures.push(currentFreehandFigure);
-            canvasChanged = true;
             renderFigureList();
         } else if (currentType === "POINTS") {
-            // Cada clic afegeix un punt a la figura actual.
-            rememberState();
             if (!currentPointsFigure) {
                 currentPointsFigure = {
                     name: "Punts " + (figures.length + 1),
@@ -464,12 +394,10 @@ if (form) {
                 figures.push(currentPointsFigure);
             }
             currentPointsFigure.points.push(pos);
-            canvasChanged = true;
             redraw();
             renderFigureList();
+            saveDrawing();
         } else {
-            // Crea una figura bàsica centrada al lloc del clic.
-            rememberState();
             figures.push({
                 name: currentType + " " + (figures.length + 1),
                 type: currentType,
@@ -478,51 +406,45 @@ if (form) {
                 y: pos.y,
                 size: Number(inputSize.value) || 50
             });
-            canvasChanged = true;
             redraw();
             renderFigureList();
+            saveDrawing();
         }
     });
 
-    // Arrossega una figura bàsica o continua el traç lliure.
+    // Moure el ratolí pel canvas
     canvas.addEventListener("mousemove", function(event) {
         const pos = getMousePos(event);
 
         if (isDragging && selectedFigure) {
-            // El centre de la figura segueix directament el cursor.
-            if (selectedFigure.x === pos.x && selectedFigure.y === pos.y) return;
-            if (!dragChanged) {
-                undoStack.push(dragStartState);
-                redoStack.length = 0;
-                dragChanged = true;
-            }
             selectedFigure.x = pos.x;
             selectedFigure.y = pos.y;
-            canvasChanged = true;
             redraw();
-            return;
-        }
-
-        if (isDrawing && currentType === "FREEHAND") {
+        } else if (isDrawing && currentFreehandFigure) {
             currentFreehandFigure.points.push(pos);
-            canvasChanged = true;
             redraw();
         }
     });
 
-    // Acaba l'arrossegament o el traç quan es deixa anar el ratolí.
+    // Deixar anar el ratolí: acaba d'arrossegar o dibuixar traç i desa
     window.addEventListener("mouseup", function() {
-        if (canvasChanged) saveDrawing();
-        canvasChanged = false;
-        isDragging = false;
-        isDrawing = false;
-        currentFreehandFigure = null;
-        dragStartState = null;
-        dragChanged = false;
+        if (isDragging || isDrawing) {
+            isDragging = false;
+            isDrawing = false;
+            currentFreehandFigure = null;
+            saveDrawing();
+        }
     });
+
+    // Marca el cercle com a eina inicial
+    seleccionarEina("CIRCLE", "btnAddCircle");
 }
 
-// Recarrega el dibuix que correspon a l'URL en navegar enrere o endavant.
+// Si l'usuari prem Enrere o Endavant al navegador, recarreguem l'estat de l'URL
 window.addEventListener("popstate", function() {
     window.location.reload();
 });
+
+// Dibuix inicial en carregar la pàgina
+redraw();
+renderFigureList();
