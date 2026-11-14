@@ -1,51 +1,74 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ca" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Editor de Dibuix</title>
-    <link rel="stylesheet" th:href="@{/css/style.css}">
-
-</head>
-<body>
-
-<header>
-    <h2>Editor de Dibuix</h2>
-    <p>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+  </head>
+  <body>
+    <header>
+      <h2>Editor de Dibuix</h2>
+      <p>
         Usuari: <strong th:text="${username}"></strong> |
         <a class="button" th:href="@{/drawings/history}">Historial</a> |
         <a th:href="@{/logout}">Tancar sessió</a>
-    </p>
-</header>
+      </p>
+    </header>
 
-<form class="controls" id="drawingForm" th:if="${canEdit}">
-    <div class="control-field control-name">
+    <form class="controls" id="drawingForm" th:if="${canEdit}">
+      <div class="control-field control-name">
         <label for="inputName">Nom del dibuix:</label>
-        <input type="text" id="inputName" name="inputName" placeholder="Nom del dibuix..." th:value="${drawing != null ? drawing.name : ''}">
-    </div>
-    <input type="hidden" id="inputDrawingId" name="inputDrawingId" th:value="${drawing != null ? drawing.id : ''}">
-    <div class="control-field control-dimension">
+        <input
+          type="text"
+          id="inputName"
+          name="inputName"
+          placeholder="Nom del dibuix..."
+          th:value="${drawing != null ? drawing.name : ''}"
+        />
+      </div>
+      <input
+        type="hidden"
+        id="inputDrawingId"
+        name="inputDrawingId"
+        th:value="${drawing != null ? drawing.id : ''}"
+      />
+      <div class="control-field control-dimension">
         <label for="inputCanvasWidth">Amplada:</label>
-        <input type="number" id="inputCanvasWidth" name="canvasWidth" min="1" step="1" required
-               th:value="${drawing != null ? drawing.width : 800}">
-    </div>
-    <div class="control-field control-dimension">
+        <input
+          type="number"
+          id="inputCanvasWidth"
+          name="canvasWidth"
+          min="1"
+          step="1"
+          required
+          th:value="${drawing != null ? drawing.width : 800}"
+        />
+      </div>
+      <div class="control-field control-dimension">
         <label for="inputCanvasHeight">Alçada:</label>
-        <input type="number" id="inputCanvasHeight" name="canvasHeight" min="1" step="1" required
-               th:value="${drawing != null ? drawing.height : 500}">
-    </div>
-    <div class="control-actions">
+        <input
+          type="number"
+          id="inputCanvasHeight"
+          name="canvasHeight"
+          min="1"
+          step="1"
+          required
+          th:value="${drawing != null ? drawing.height : 500}"
+        />
+      </div>
+      <div class="control-actions">
         <button id="btnSave" type="submit">💾 Guardar ara</button>
         <button id="btnUndo" type="button">↩️ Desfer</button>
         <button id="btnRedo" type="button">↪️ Refer</button>
         <span id="saveStatus"></span>
-    </div>
-</form>
+      </div>
+    </form>
 
-<hr>
+    <hr />
 
-<div class="editor-layout">
-    <div class="sidebar" th:if="${canEdit}">
+    <div class="editor-layout">
+      <div class="sidebar" th:if="${canEdit}">
         <h3>Afegir figura</h3>
         <button id="btnAddCircle">🔵 Cercle</button>
         <button id="btnAddSquare">🟦 Quadrat</button>
@@ -54,33 +77,47 @@
         <button id="btnAddFreehand">✏️ Lliure</button>
         <button id="btnAddPoints">📏 Per punts</button>
         <div class="sidebar-field">
-            <label for="inputColor">Color:</label>
-            <input type="color" id="inputColor" value="#0000ff">
+          <label for="inputColor">Color:</label>
+          <input type="color" id="inputColor" value="#0000ff" />
         </div>
         <div class="sidebar-field">
-            <label for="inputSize">Mida:</label>
-            <input type="number" id="inputSize" name="inputSize" min="1" value="50">
+          <label for="inputSize">Mida:</label>
+          <input
+            type="number"
+            id="inputSize"
+            name="inputSize"
+            min="1"
+            value="50"
+          />
         </div>
-        <button id="btnDeleteSelected" type="button" style="color: red;">🗑️ Eliminar seleccionada</button>
-        <button id="btnDeleteAll" type="button" style="color: red;">🗑️ Esborrar-ho tot</button>
-    </div>
+        <button id="btnDeleteSelected" type="button" style="color: red">
+          🗑️ Eliminar seleccionada
+        </button>
+        <button id="btnDeleteAll" type="button" style="color: red">
+          🗑️ Esborrar-ho tot
+        </button>
+      </div>
 
-    <main class="canvas-wrap">
+      <main class="canvas-wrap">
         <p th:if="${!canEdit}">Aquest dibuix és només de lectura.</p>
-        <canvas id="canvas" th:width="${drawing != null ? drawing.width : 800}"
-                th:height="${drawing != null ? drawing.height : 500}"></canvas>
-    </main>
+        <canvas
+          id="canvas"
+          th:width="${drawing != null ? drawing.width : 800}"
+          th:height="${drawing != null ? drawing.height : 500}"
+        ></canvas>
+      </main>
 
-    <aside class="figure-panel">
+      <aside class="figure-panel">
         <h3>Figures</h3>
         <ul id="figureList" class="figure-list"></ul>
-    </aside>
-</div>
+      </aside>
+    </div>
 
-<script th:inline="javascript">
-    const initialFigures = /*[[${drawing != null ? drawing.figures : null}]]*/ null;
-</script>
+    <script th:inline="javascript">
+      const initialFigures =
+        /*[[${drawing != null ? drawing.figures : null}]]*/ null;
+    </script>
 
-<script th:src="@{/js/editor.js}"></script>
-</body>
+    <script th:src="@{/js/editor.js}"></script>
+  </body>
 </html>
