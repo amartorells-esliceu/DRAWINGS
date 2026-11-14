@@ -1,4 +1,11 @@
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
 body {
+    width: 100%;
     max-width: 1000px;
     margin: 32px auto;
     padding: 0 16px;
@@ -38,24 +45,58 @@ button {
 }
 
 .controls {
+    display: grid;
+    grid-template-columns: minmax(12rem, 1fr) 6rem 6rem;
+    align-items: end;
+    gap: 8px;
+}
+
+.control-field {
+    display: grid;
+    gap: 4px;
+    min-width: 0;
+}
+
+.control-name {
+    min-width: 0;
+}
+
+.control-name input,
+.control-dimension input {
+    width: 100%;
+    min-width: 0;
+}
+
+.control-actions {
+    grid-column: 1 / -1;
     display: flex;
     align-items: center;
     flex-wrap: wrap;
     gap: 8px;
 }
 
+#saveStatus {
+    color: gray;
+}
+
+#inputCanvasWidth,
+#inputCanvasHeight {
+    width: 100%;
+}
+
 .editor-layout {
     display: flex;
     align-items: flex-start;
     flex-wrap: wrap;
-    gap: 20px;
+    gap: 16px;
 }
 
 .sidebar {
     display: grid;
     align-content: start;
     gap: 8px;
-    min-width: 150px;
+    flex: 0 0 150px;
+    min-width: 0;
 }
 
 .sidebar h3 {
@@ -65,11 +106,18 @@ button {
 .sidebar-field {
     display: grid;
     gap: 4px;
+    margin-top: 8px;
 }
 
 .sidebar-field input {
     box-sizing: border-box;
     width: 100%;
+}
+
+.sidebar-field input[type="color"] {
+    width: 4rem;
+    height: 2rem;
+    padding: 3px;
 }
 
 .sidebar button.active {
@@ -80,12 +128,13 @@ button {
 }
 
 .canvas-wrap {
-    flex: 1;
+    flex: 1 1 300px;
     min-width: 0;
 }
 
 .figure-panel {
-    min-width: 180px;
+    flex: 0 0 180px;
+    min-width: 0;
 }
 
 .figure-panel h3 {
@@ -100,15 +149,9 @@ button {
     list-style: none;
 }
 
-.figure-list button,
 .figure-list input {
     box-sizing: border-box;
     width: 100%;
-}
-
-.figure-list button.selected {
-    border-color: #1769aa;
-    background: #dbeafe;
 }
 
 #canvas {
@@ -135,4 +178,57 @@ button {
 
 .drawing-list form {
     margin: 0;
+}
+
+@media (max-width: 720px) {
+    body {
+        margin-top: 20px;
+        padding: 0 12px;
+    }
+
+    .editor-layout {
+        flex-direction: column;
+    }
+
+    .sidebar,
+    .canvas-wrap,
+    .figure-panel {
+        flex: auto;
+        width: 100%;
+    }
+
+    .sidebar {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .sidebar h3,
+    .sidebar-field,
+    #btnDeleteSelected,
+    #btnDeleteAll {
+        grid-column: 1 / -1;
+    }
+
+    .figure-panel {
+        margin-top: 0;
+    }
+
+    .drawing-list li > strong {
+        flex: 1 1 100%;
+        min-width: 0;
+        overflow-wrap: anywhere;
+    }
+
+    .drawing-list li > span {
+        overflow-wrap: anywhere;
+    }
+}
+
+@media (max-width: 420px) {
+    .controls {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .control-name {
+        grid-column: 1 / -1;
+    }
 }

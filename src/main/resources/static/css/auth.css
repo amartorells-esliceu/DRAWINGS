@@ -1,8 +1,10 @@
 body {
     font-family: sans-serif;
-    max-width: 320px;
-    margin: 50px auto;
+    width: 100%;
+    max-width: 360px;
+    margin: 32px auto;
     padding: 20px;
+    box-sizing: border-box;
 }
 
 div {

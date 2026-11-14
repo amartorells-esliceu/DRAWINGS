@@ -2,6 +2,7 @@
 <html lang="ca" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Historial de dibuixos</title>
     <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
@@ -21,6 +22,9 @@
     <ul class="drawing-list">
         <li th:each="drawing : ${myDrawings}">
             <strong th:text="${drawing.name}"></strong>
+            <span>Figures: <strong th:text="${#lists.size(drawing.figures)}"></strong></span>
+            <span>Creat: <span th:text="${drawing.createdAt}"></span></span>
+            <span>Modificat: <span th:text="${drawing.updatedAt}"></span></span>
             <a th:href="@{/drawings/editor(id=${drawing.id})}">Editar</a>
             <form th:action="@{/drawings/delete}" method="post">
                 <input type="hidden" name="id" th:value="${drawing.id}">
@@ -37,6 +41,9 @@
         <li th:each="drawing : ${othersDrawings}">
             <strong th:text="${drawing.name}"></strong>
             <span>de <span th:text="${drawing.ownerUsername}"></span></span>
+            <span>Figures: <strong th:text="${#lists.size(drawing.figures)}"></strong></span>
+            <span>Creat: <span th:text="${drawing.createdAt}"></span></span>
+            <span>Modificat: <span th:text="${drawing.updatedAt}"></span></span>
             <a th:href="@{/drawings/editor(id=${drawing.id})}">Veure</a>
         </li>
     </ul>
