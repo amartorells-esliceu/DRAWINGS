@@ -15,35 +15,41 @@ public class DrawingService {
     @Autowired
     private DrawingRepo drawingRepo;
 
-    public Drawing saveDrawing(String id, String name, String username, List<GeometricFigure> figures) {
+    public Drawing saveDrawing(String id, String name, String username, List<GeometricFigure> figures,
+                               int width, int height) {
 
-        if (name == null || name.isEmpty()){
-            name = "Dibuix sense nom";
+        if (name == null || name.isBlank()) {
+            int randomNumber = (int) (Math.random() * 1000);
+            name = "Dibuix: " + randomNumber;
         }
 
         if (id == null || id.isEmpty()){
-            return createDrawing(name, username, figures);
+            return createDrawing(name, username, figures, width, height);
         } else {
-            return updateDrawing(id, name, username, figures);
+            return updateDrawing(id, name, username, figures, width, height);
         }
     }
 
-    private Drawing updateDrawing(String id, String name, String username, List<GeometricFigure> figures){
+    private Drawing updateDrawing(String id, String name, String username, List<GeometricFigure> figures,
+                                  int width, int height) {
         Drawing existingDrawing = drawingRepo.findById(id);
 
         if (existingDrawing != null && username.equals(existingDrawing.getOwnerUsername())) {
             existingDrawing.setName(name);
             existingDrawing.setFigures(figures);
+            existingDrawing.setWidth(width);
+            existingDrawing.setHeight(height);
             existingDrawing.setUpdatedAt(LocalDateTime.now());
             drawingRepo.save(existingDrawing);
         }
         return existingDrawing;
     }
 
-    private Drawing createDrawing(String name, String username, List<GeometricFigure> figures){
+    private Drawing createDrawing(String name, String username, List<GeometricFigure> figures,
+                                  int width, int height) {
         String id = java.util.UUID.randomUUID().toString();
 
-        Drawing drawing = new Drawing(id, name, username, figures);
+        Drawing drawing = new Drawing(id, name, username, figures, width, height);
 
         drawingRepo.save(drawing);
 

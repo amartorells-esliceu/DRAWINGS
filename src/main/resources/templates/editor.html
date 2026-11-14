@@ -21,6 +21,12 @@
     <label for="inputName">Nom del dibuix:</label>
     <input type="text" id="inputName" name="inputName" placeholder="Nom del dibuix..." th:value="${drawing != null ? drawing.name : ''}">
     <input type="hidden" id="inputDrawingId" name="inputDrawingId" th:value="${drawing != null ? drawing.id : ''}">
+    <label for="inputCanvasWidth">Amplada:</label>
+    <input type="number" id="inputCanvasWidth" name="canvasWidth" min="1" step="1" required
+           th:value="${drawing != null ? drawing.width : 800}">
+    <label for="inputCanvasHeight">Alçada:</label>
+    <input type="number" id="inputCanvasHeight" name="canvasHeight" min="1" step="1" required
+           th:value="${drawing != null ? drawing.height : 500}">
 
     <button id="btnSave" type="submit">💾 Guardar ara</button>
     <button id="btnUndo" type="button">↩️ Desfer</button>
@@ -47,13 +53,20 @@
             <input type="number" id="inputSize" name="inputSize" min="1" value="50">
         </div>
         <br><br>
-        <button id="btnDeleteSelected" style="color: red;">🗑️ Eliminar dibuix!</button>
+        <button id="btnDeleteSelected" type="button" style="color: red;">🗑️ Eliminar seleccionada</button>
+        <button id="btnDeleteAll" type="button" style="color: red;">🗑️ Esborrar-ho tot</button>
     </div>
 
     <main class="canvas-wrap">
         <p th:if="${!canEdit}">Aquest dibuix és només de lectura.</p>
-        <canvas id="canvas" width="800" height="500"></canvas>
+        <canvas id="canvas" th:width="${drawing != null ? drawing.width : 800}"
+                th:height="${drawing != null ? drawing.height : 500}"></canvas>
     </main>
+
+    <aside class="figure-panel">
+        <h3>Figures</h3>
+        <ul id="figureList" class="figure-list"></ul>
+    </aside>
 </div>
 
 <script th:inline="javascript">

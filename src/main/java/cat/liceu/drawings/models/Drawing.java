@@ -9,6 +9,8 @@ public class Drawing {
     private String name;
     private String ownerUsername;
     private List<GeometricFigure> figures = new ArrayList<>();
+    private int width = 800;
+    private int height = 500;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
@@ -16,10 +18,17 @@ public class Drawing {
     }
 
     public Drawing(String id, String name, String ownerUsername, List<GeometricFigure> figures) {
+        this(id, name, ownerUsername, figures, 800, 500);
+    }
+
+    public Drawing(String id, String name, String ownerUsername, List<GeometricFigure> figures,
+                   int width, int height) {
         this.id = id;
         this.name = name;
         this.ownerUsername = ownerUsername;
         this.figures = figures;
+        this.width = width;
+        this.height = height;
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
     }
@@ -54,6 +63,22 @@ public class Drawing {
 
     public void setFigures(List<GeometricFigure> figures) {
         this.figures = figures;
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public void setWidth(int width) {
+        this.width = width;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
+    public void setHeight(int height) {
+        this.height = height;
     }
 
     public LocalDateTime getCreatedAt() {

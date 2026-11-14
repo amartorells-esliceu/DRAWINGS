@@ -84,6 +84,33 @@ button {
     min-width: 0;
 }
 
+.figure-panel {
+    min-width: 180px;
+}
+
+.figure-panel h3 {
+    margin-top: 0;
+}
+
+.figure-list {
+    display: grid;
+    gap: 8px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.figure-list button,
+.figure-list input {
+    box-sizing: border-box;
+    width: 100%;
+}
+
+.figure-list button.selected {
+    border-color: #1769aa;
+    background: #dbeafe;
+}
+
 #canvas {
     display: block;
     width: 100%;
