@@ -1,6 +1,6 @@
 # DRAWINGS
 Pràctica 1 Entorns Servidor.
 
-Aplicació local: [http://localhost:8080](http://localhost:8080)
+Requisits: Java 25 i Maven.
 
-Informació CANVAS: [Informació CANVAS](https://www.w3schools.com/html/html5_canvas.asp)
+Executa `mvn spring-boot:run` i obre [http://localhost:8080](http://localhost:8080).

@@ -5,7 +5,6 @@ import cat.liceu.drawings.models.Drawing;
 import cat.liceu.drawings.service.DrawingService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -44,26 +43,11 @@ public class DrawingController {
     }
 
     @PostMapping("/save")
-    public ResponseEntity<?> saveDrawing(@RequestBody DrawingDTO request, HttpSession session) {
-        String username = getUsername(session);
-
-        if (username == null){
-            return ResponseEntity.status(401).body("No autoritzat");
-        }
-
-        if (request.getWidth() < 1 || request.getHeight() < 1) {
-            return ResponseEntity.badRequest().body("Les dimensions del canvas han de ser positives");
-        }
-
-        Drawing savedDrawing = drawingService.saveDrawing(
-                request.getId(), request.getName(), username, request.getFigures(),
+    @ResponseBody
+    public Drawing saveDrawing(@RequestBody DrawingDTO request, HttpSession session) {
+        return drawingService.saveDrawing(
+                request.getId(), request.getName(), getUsername(session), request.getFigures(),
                 request.getWidth(), request.getHeight());
-
-        if (savedDrawing == null) {
-            return ResponseEntity.status(403).body("Accés denegat o dibuix no trobat");
-        }
-
-        return ResponseEntity.ok(savedDrawing);
     }
 
     @GetMapping("/history")

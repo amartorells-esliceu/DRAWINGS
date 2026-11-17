@@ -114,8 +114,7 @@
     </div>
 
     <script th:inline="javascript">
-      const initialFigures =
-        /*[[${drawing != null ? drawing.figures : null}]]*/ null;
+      const initialFigures = [[${drawing != null ? drawing.figures : null}]];
     </script>
 
     <script th:src="@{/js/editor.js}"></script>

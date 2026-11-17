@@ -60,10 +60,6 @@ section {
   min-width: 0;
 }
 
-.control-name {
-  min-width: 0;
-}
-
 .control-name input,
 .control-dimension input {
   width: 100%;
@@ -80,11 +76,6 @@ section {
 
 #saveStatus {
   color: gray;
-}
-
-#inputCanvasWidth,
-#inputCanvasHeight {
-  width: 100%;
 }
 
 .editor-layout {
@@ -113,7 +104,6 @@ section {
 }
 
 .sidebar-field input {
-  box-sizing: border-box;
   width: 100%;
 }
 
@@ -153,7 +143,6 @@ section {
 }
 
 .figure-list input {
-  box-sizing: border-box;
   width: 100%;
 }
 
