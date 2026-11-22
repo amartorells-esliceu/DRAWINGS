@@ -23,13 +23,16 @@ public class DrawingController {
 
     @GetMapping("/editor")
     public String editor(@RequestParam(required = false) String id, HttpSession session, Model model) {
+
         String username = getUsername(session);
+
         if (username == null) {
             return "redirect:/login";
         }
 
         model.addAttribute("username", username);
         model.addAttribute("canEdit", true);
+
         if (id != null) {
             Drawing drawing = drawingService.getDrawingById(id);
             if (drawing == null) {
@@ -45,14 +48,20 @@ public class DrawingController {
     @PostMapping("/save")
     @ResponseBody
     public Drawing saveDrawing(@RequestBody DrawingDTO request, HttpSession session) {
-        return drawingService.saveDrawing(
-                request.getId(), request.getName(), getUsername(session), request.getFigures(),
-                request.getWidth(), request.getHeight());
+
+        String username = getUsername(session);
+
+        if (username == null) return null;
+
+        return drawingService.saveDrawing(request.getId(), request.getName(), getUsername(session),
+                request.getFigures(), request.getWidth(), request.getHeight());
     }
 
     @GetMapping("/history")
     public String history(HttpSession session, Model model) {
+
         String username = getUsername(session);
+
         if (username == null) {
             return "redirect:/login";
         }
@@ -60,17 +69,21 @@ public class DrawingController {
         model.addAttribute("username", username);
         model.addAttribute("myDrawings", drawingService.getMyDrawings(username));
         model.addAttribute("othersDrawings", drawingService.getOthersDrawings(username));
+
         return "history";
     }
 
     @PostMapping("/delete")
     public String deleteDrawing(@RequestParam String id, HttpSession session) {
+
         String username = getUsername(session);
+
         if (username == null) {
             return "redirect:/login";
         }
 
         drawingService.deleteDrawing(id, username);
+
         return "redirect:/drawings/history";
     }
 }

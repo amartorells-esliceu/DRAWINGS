@@ -33,11 +33,25 @@ public class DrawingService {
         if (id == null || id.isEmpty()){
             return createDrawing(name, username, figures, width, height);
         }
+
         return updateDrawing(id, name, username, figures, width, height);
+    }
+
+    private Drawing createDrawing(String name, String username, List<GeometricFigure> figures,
+                                  int width, int height) {
+
+        String id = java.util.UUID.randomUUID().toString();
+
+        Drawing drawing = new Drawing(id, name, username, figures, width, height);
+
+        drawingRepo.save(drawing);
+
+        return drawing;
     }
 
     private Drawing updateDrawing(String id, String name, String username, List<GeometricFigure> figures,
                                   int width, int height) {
+
         Drawing existingDrawing = drawingRepo.findById(id);
 
         if (existingDrawing == null || !username.equals(existingDrawing.getOwnerUsername())) {
@@ -51,17 +65,6 @@ public class DrawingService {
         existingDrawing.setUpdatedAt(LocalDateTime.now());
         drawingRepo.save(existingDrawing);
         return existingDrawing;
-    }
-
-    private Drawing createDrawing(String name, String username, List<GeometricFigure> figures,
-                                  int width, int height) {
-        String id = java.util.UUID.randomUUID().toString();
-
-        Drawing drawing = new Drawing(id, name, username, figures, width, height);
-
-        drawingRepo.save(drawing);
-
-        return drawing;
     }
 
     public List<Drawing> getMyDrawings(String username) {

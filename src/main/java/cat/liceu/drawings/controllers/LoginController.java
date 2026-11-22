@@ -25,17 +25,13 @@ public class LoginController {
 
     @PostMapping("/register")
     public String registerPost(@Valid @ModelAttribute("registerForm") RegisterForm registerForm,
-                               BindingResult result,
-                               Model model) {
+                               BindingResult result, Model model) {
+
         if (result.hasErrors()) {
             return "register";
         }
 
-        if (!loginService.registerUser(
-                registerForm.getName(),
-                registerForm.getUsername(),
-                registerForm.getPassword()
-        )) {
+        if (!loginService.registerUser(registerForm.getName(), registerForm.getUsername(), registerForm.getPassword())) {
             model.addAttribute("message", "Aquest usuari ja existeix");
             return "register";
         }
@@ -45,18 +41,19 @@ public class LoginController {
 
     @GetMapping({"/", "/login"})
     public String login(HttpSession session, Model model) {
+
         if (session.getAttribute("username") != null) {
             return "redirect:/drawings/editor";
         }
+
         model.addAttribute("loginForm", new LoginForm());
+
         return "login";
     }
 
     @PostMapping("/login")
     public String loginPost(@Valid @ModelAttribute("loginForm") LoginForm loginForm,
-                            BindingResult result,
-                            Model model,
-                            HttpSession session) {
+                            BindingResult result, Model model, HttpSession session) {
 
         if (result.hasErrors()) {
             return "login";
@@ -71,6 +68,7 @@ public class LoginController {
         }
 
         model.addAttribute("message", "Usuari o contrasenya incorrectes");
+
         return "login";
     }
 

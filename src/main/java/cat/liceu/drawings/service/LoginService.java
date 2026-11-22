@@ -24,11 +24,7 @@ public class LoginService {
             return false;
         }
 
-        User user = new User();
-        user.setName(name);
-        user.setUsername(username);
-        user.setPassword(password);
-        userRepo.save(user);
+        userRepo.save(new User(name, username, password));
         return true;
     }
 }

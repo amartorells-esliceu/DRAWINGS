@@ -14,11 +14,11 @@ public class DrawingRepoImpl implements DrawingRepo {
     @Override
     public void save(Drawing drawing) {
         Drawing existing = findById(drawing.getId());
-        if (existing != null) {
+        if (existing == null) {
+            drawings.add(drawing);
+        } else {
             int index = drawings.indexOf(existing);
             drawings.set(index, drawing);
-        } else {
-            drawings.add(drawing);
         }
     }
 
@@ -38,7 +38,7 @@ public class DrawingRepoImpl implements DrawingRepo {
         List<Drawing> result = new ArrayList<>();
         if (username == null) return result;
         for (Drawing d : drawings) {
-            if (username.equals(d.getOwnerUsername())) {
+            if (d.getOwnerUsername().equals(username)) {
                 result.add(d);
             }
         }
@@ -50,7 +50,7 @@ public class DrawingRepoImpl implements DrawingRepo {
         List<Drawing> result = new ArrayList<>();
         if (username == null) return result;
         for (Drawing d : drawings) {
-            if (!username.equals(d.getOwnerUsername())) {
+            if (!d.getOwnerUsername().equals(username)) {
                 result.add(d);
             }
         }

@@ -17,10 +17,6 @@ public class Drawing {
     public Drawing() {
     }
 
-    public Drawing(String id, String name, String ownerUsername, List<GeometricFigure> figures) {
-        this(id, name, ownerUsername, figures, 800, 500);
-    }
-
     public Drawing(String id, String name, String ownerUsername, List<GeometricFigure> figures,
                    int width, int height) {
         this.id = id;

@@ -27,8 +27,8 @@ public class UserRepoImpl implements UserRepo {
 
     @Override
     public User findByUsername(String username) {
-        for (User u : users) {
-            if (u.getUsername().equals(username)) {
+        for (User u : users){
+            if (username.equals(u.getUsername())){
                 return u;
             }
         }
