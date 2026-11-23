@@ -16,7 +16,7 @@ public class LoginService {
 
         if (u == null) return false;
 
-        return password.equals(u.getPassword());
+        return u.getPassword().equals(password);
     }
 
     public boolean registerUser(String name, String username, String password) {

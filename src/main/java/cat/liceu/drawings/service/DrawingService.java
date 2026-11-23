@@ -17,6 +17,7 @@ public class DrawingService {
 
     public Drawing saveDrawing(String id, String name, String username, List<GeometricFigure> figures,
                                int width, int height) {
+
         if (username == null) {
             throw new IllegalArgumentException("Cal iniciar sessió per desar un dibuix");
         }
