@@ -13,17 +13,12 @@ public class LoginService {
 
     public boolean checkLogin(String username, String password) {
         User u = userRepo.findByUsername(username);
-
         if (u == null) return false;
-
         return u.getPassword().equals(password);
     }
 
     public boolean registerUser(String name, String username, String password) {
-        if (userRepo.findByUsername(username) != null) {
-            return false;
-        }
-
+        if (userRepo.findByUsername(username) != null) return false;
         userRepo.save(new User(name, username, password));
         return true;
     }
