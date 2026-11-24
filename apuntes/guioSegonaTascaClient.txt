@@ -1,1 +1,177 @@
-Pendent...
+APUNTS - SEGONA ENTREGA CLIENT
+Projecte DRAWINGS
+
+He comparat els requisits R10–R20 de "EnunciatDeLaPractica-SegonaEntrega-Client.pdf" amb el codi actual de l'editor. Els estats descriuen el que es veu implementat ara mateix; prova l'aplicació després de cada canvi abans de donar un requisit per acabat.
+
+ESTATS
+- FET: ja hi ha una implementació que cobreix el requisit.
+- PARCIAL: hi ha una part feta, però falten aspectes importants.
+- PENDENT: no he trobat una implementació del requisit.
+
+ORDRE RECOMANAT
+Primer prepara una gestió de l'estat i de la selecció que serveixi per a totes les accions. Després implementa historial/restauració i les operacions de figures. A continuació afegeix capes, miniatures, colors i navegació del canvas. Finalment incorpora importació/exportació, dreceres i interacció tàctil.
+
+PAS 1 - HISTORIAL DELS CANVIS (R10)
+
+ENUNCIAT:
+"Es pot veure un historial dels canvis fets en un dibuix."
+
+ESTAT: PARCIAL. HI HA DESFER I REFERIR DURANT LA SESSIÓ, PERÒ NO UNA VISTA D'HISTORIAL PERSISTENT.
+
+QUÈ HI HA FET:
+src/main/resources/static/js/editor.js manté undoStack i redoStack, i ofereix els botons Desfer i Refer. L'estat inclou figures, dimensions i nom. Aquestes piles viuen només a la memòria del navegador i no es mostren com una llista d'entrades consultables.
+
+QUÈ HAS DE FER:
+1. Desa una instantània identificable després de cada canvi complet del dibuix, amb una data i hora i les dades necessàries per reconstruir-lo.
+2. Afegeix un panell d'historial amb les entrades ordenades de la més recent a la més antiga.
+3. Decideix on es conserva l'historial perquè continuï disponible quan es torni a obrir el dibuix; coordina-ho amb el servidor si cal.
+4. Evita crear entrades duplicades quan l'estat no ha canviat.
+
+PAS 2 - SELECCIÓ MÚLTIPLE (R11)
+
+ENUNCIAT:
+"Es poden seleccionar diverses figures alhora (Shift+clic o rectangle de selecció) per moure-les, esborrar-les o canviar-ne el color de cop."
+
+ESTAT: PENDENT. NOMÉS ES POT SELECCIONAR UNA FIGURA.
+
+QUÈ HAS DE FER:
+1. Canvia selectedFigure per una selecció de diverses figures i mostra visualment totes les seleccionades.
+2. Permet afegir o treure figures de la selecció amb Shift+clic.
+3. Afegeix una eina de rectangle de selecció que seleccioni les figures dins de l'àrea marcada.
+4. Mou les figures seleccionades mantenint-ne les distàncies relatives.
+5. Fes que eliminar i canviar el color s'apliqui a totes les figures seleccionades.
+6. Desa cada acció conjunta com un únic canvi a l'historial.
+
+PAS 3 - COPIAR, RETALLAR, ENGANXAR I DUPLICAR FIGURES (R12)
+
+ENUNCIAT:
+"Es poden copiar, retallar, enganxar i duplicar figures."
+
+ESTAT: PENDENT.
+
+QUÈ HAS DE FER:
+1. Implementa copiar i retallar sobre la selecció actual, conservant tots els atributs de les figures, inclosos els punts dels traços.
+2. En enganxar, crea figures independents i desplaça-les una mica perquè es vegin sobre les originals.
+3. Afegeix una acció de duplicar que copiï directament la selecció.
+4. Assegura't que desfer/refer i l'historial enregistrin aquestes operacions.
+
+PAS 4 - REORDENAR LES CAPES (R13)
+
+ENUNCIAT:
+"Es pot canviar quina figura queda al davant o al fons arrossegant-la a la llista d'objectes (reordenar les capes)."
+
+ESTAT: PARCIAL. L'ORDRE DE figures JA DETERMINA QUÈ ES DIBUIXA DAVANT, PERÒ LA LLISTA NO ES POT REORDENAR.
+
+QUÈ HI HA FET:
+redraw() recorre figures en ordre. Les figures del final de la llista es pinten al davant i també es comproven primer en seleccionar-les.
+
+QUÈ HAS DE FER:
+1. Fes que les entrades de la llista d'objectes es puguin arrossegar.
+2. En deixar anar una entrada, canvia l'ordre de figures segons la nova posició.
+3. Actualitza el canvas i desa el canvi perquè la capa superior/inferior es mantingui en reobrir el dibuix.
+4. Indica clarament a la llista quina figura és al davant i quina queda al fons.
+
+PAS 5 - MINIATURES A LA LLISTA DE FIGURES (R14)
+
+ENUNCIAT:
+"Cada figura té una miniatura al llistat de figures."
+
+ESTAT: PENDENT. LA LLISTA MOSTRA EL NOM DE CADA FIGURA, SENSE MINIATURA.
+
+QUÈ HAS DE FER:
+1. Afegeix a cada fila una miniatura petita que representi la figura, amb la forma i el color correctes.
+2. Representa també les figures de traç lliure i per punts.
+3. Actualitza la miniatura quan canviïn el color, la mida, els punts o el tipus de figura.
+4. Conserva la selecció sincronitzada entre la llista i el canvas.
+
+PAS 6 - COMPTAGOTES I COLORS RECENTS (R15)
+
+ENUNCIAT:
+"Hi ha un comptagotes per agafar el color d'una figura i una paleta amb els 10 colors recents."
+
+ESTAT: PARCIAL. ES POT TRIAR UN COLOR I EL COLOR DE LA FIGURA SELECCIONADA APAREIX AL CONTROL, PERÒ NO HI HA COMPTAGOTES NI PALETA DE COLORS RECENTS.
+
+QUÈ HI HA FET:
+editor.html inclou inputColor. En seleccionar una figura, editor.js copia fig.color al control; també es pot aplicar el color a la figura seleccionada.
+
+QUÈ HAS DE FER:
+1. Afegeix una eina de comptagotes per seleccionar una figura del canvas i reutilitzar-ne el color.
+2. Mantén una llista dels 10 colors utilitzats més recentment, sense duplicats.
+3. Mostra'ls com una paleta seleccionable i actualitza-la cada vegada que s'apliqui o triï un color.
+4. Comprova que les accions funcionin també amb selecció múltiple.
+
+PAS 7 - ZOOM I DESPLAÇAMENT DEL CANVAS (R16)
+
+ENUNCIAT:
+"Es pot fer zoom i desplaçar el canvas sense canviar les coordenades lògiques."
+
+ESTAT: PENDENT. EL CANVAS S'ESCALA A LA MIDA VISUAL DEL CONTENIDOR, PERÒ NO HI HA CONTROLS DE ZOOM NI DESPLAÇAMENT.
+
+QUÈ HAS DE FER:
+1. Afegeix zoom d'apropament i allunyament, i una manera de desplaçar la vista.
+2. Mantén les coordenades de les figures en l'espai lògic original; zoom i desplaçament només han d'afectar la visualització.
+3. Converteix correctament les coordenades del punter a coordenades lògiques perquè dibuixar, seleccionar i moure figures continuï funcionant amb qualsevol zoom.
+4. Limita el zoom a valors útils i permet tornar a la vista inicial.
+
+PAS 8 - RESTAURAR DES DE L'HISTORIAL (R17)
+
+ENUNCIAT:
+"Clicant una entrada de l'historial, el dibuix torna a l'estat d'aquell moment."
+
+ESTAT: PENDENT. ELS BOTONS DESFER/REFER NO PERMETEN SELECCIONAR UNA ENTRADA CONCRETA.
+
+QUÈ HAS DE FER:
+1. Fes que cada entrada de l'historial es pugui seleccionar.
+2. En seleccionar-la, restaura figures, ordre de capes, nom i dimensions que hi havia en aquell moment.
+3. Actualitza la llista de figures i el canvas immediatament.
+4. Desa l'estat restaurat sense esborrar les entrades d'historial posteriors.
+5. Prova la restauració després de tancar i tornar a obrir el dibuix.
+
+PAS 9 - EXPORTAR I IMPORTAR (R18)
+
+ENUNCIAT:
+"El dibuix es pot exportar a SVG i JSON, i importar des d'un JSON."
+
+ESTAT: PENDENT. NO HI HA FUNCIONS D'IMPORTACIÓ NI EXPORTACIÓ A L'EDITOR.
+
+QUÈ HAS DE FER:
+1. Implementa l'exportació JSON amb nom, dimensions i figures, incloent-ne tots els atributs i punts.
+2. Implementa l'exportació SVG de les figures que admet l'editor, respectant forma, posició, mida, color i ordre de capes.
+3. Afegeix la importació d'un fitxer JSON i valida'n l'estructura abans de substituir el dibuix actual.
+4. Gestiona fitxers invàlids amb un missatge clar i evita perdre el dibuix existent si la importació falla.
+5. Desa un dibuix importat i comprova que tornar-lo a exportar/reimportar en conserva l'aspecte i les dades.
+
+PAS 10 - DRECERES DE TECLAT I AJUDA (R19)
+
+ENUNCIAT:
+"Hi ha dreceres de teclat (Del, Ctrl+C/V/D, fletxes per moure la figura) i un panell d'ajuda que s'obre amb la tecla '?' i mostra les dreceres."
+
+ESTAT: PENDENT. NO HI HA DRECERES NI PANELL D'AJUDA.
+
+QUÈ HAS DE FER:
+1. Afegeix Supr/Delete per eliminar la selecció.
+2. Afegeix Ctrl+C, Ctrl+V i Ctrl+D per copiar, enganxar i duplicar.
+3. Fes servir les fletxes per moure la selecció; defineix un increment pràctic i evita que les tecles desplacin la pàgina mentre s'edita el canvas.
+4. Obre i tanca un panell d'ajuda amb "?" i mostra-hi totes les dreceres implementades.
+5. No interceptis dreceres quan l'usuari escrigui dins d'un camp de text o d'un control de formulari.
+6. Assegura't que les dreceres respectin els permisos de lectura/escriptura de l'editor.
+
+PAS 11 - COMPATIBILITAT AMB TAULETES I MÒBILS (R20)
+
+ENUNCIAT:
+"Es pot dibuixar i arrossegar figures des d'una tauleta o un mòbil."
+
+ESTAT: PENDENT. LES INTERACCIONS DEL CANVAS UTILITZEN mouse events.
+
+QUÈ HAS DE FER:
+1. Admet esdeveniments de punter (Pointer Events) o una alternativa que funcioni amb ratolí, llapis tàctil i dit.
+2. Permet dibuixar traços i figures i arrossegar les figures existents en pantalles tàctils.
+3. Configura el canvas perquè els gestos no desplacin accidentalment la pàgina mentre s'hi dibuixa; mantén usable la resta de la interfície.
+4. Revisa que la conversió de coordenades funcioni en diferents mides i orientacions de pantalla.
+5. Prova les eines, selecció i desplaçament amb ratolí i amb entrada tàctil.
+
+NOTES D'IMPLEMENTACIÓ
+
+La lògica principal del client és a src/main/resources/static/js/editor.js i la interfície de l'editor a src/main/resources/templates/editor.html. Els estils són a src/main/resources/static/css/style.css. Mantén en un únic estat coherent les figures, la selecció, les capes i les instantànies; actualitza el canvas i la llista després de cada operació.
+
+Recorda que R10 descriu l'historial visible i R17 n'exigeix restaurar una entrada seleccionada. Els botons actuals de Desfer/Refer són útils, però per si sols no cobreixen aquests dos requisits. Quan implementis interaccions noves, fes que siguin compatibles amb l'edició només de lectura i amb el desament existent.
