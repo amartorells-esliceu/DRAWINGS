@@ -26,18 +26,19 @@ public class DrawingController {
 
         String username = getUsername(session);
 
-        if (username == null) {
+        if (username == null){
             return "redirect:/login";
         }
 
         model.addAttribute("username", username);
         model.addAttribute("canEdit", true);
 
-        if (id != null) {
+        if (id != null){
             Drawing drawing = drawingService.getDrawingById(id);
-            if (drawing == null) {
+            if (drawing == null){
                 return "redirect:/drawings/history";
             }
+
             model.addAttribute("drawing", drawing);
             model.addAttribute("canEdit", username.equals(drawing.getOwnerUsername()));
         }
@@ -62,7 +63,7 @@ public class DrawingController {
 
         String username = getUsername(session);
 
-        if (username == null) {
+        if (username == null){
             return "redirect:/login";
         }
 
