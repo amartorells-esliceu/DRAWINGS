@@ -1,0 +1,210 @@
+APUNTES - SEGONA ENTREGA
+Projecte DRAWINGS
+
+He comparat l'enunciat de "EnunciatDeLaPractica-SegonaEntrega.pdf" amb el codi actual del projecte. Els estats indiquen el que es veu implementat ara mateix; revisa i prova l'aplicació abans de donar cap requisit per acabat.
+
+ESTATS
+- FET: ja hi ha una implementació que cobreix el requisit.
+- PARCIAL: hi ha una part feta, però falten aspectes importants.
+- PENDENT: no he trobat una implementació del requisit.
+
+ORDRE RECOMANAT
+Primer implementa la persistència amb MySQL i JdbcTemplate. Després afegeix versions i paperera. A continuació fes els permisos i la compartició, i finalment les còpies. Així les funcionalitats noves treballaran amb dades persistents.
+
+PAS 1 - DESAR ELS CANVIS AUTOMÀTICAMENT
+
+ENUNCIAT:
+"Les imatges es guarden al servidor automàticament cada vegada que s'afegeix o s'elimina un objecte (o bé cada cert temps, per exemple, cada minut)."
+
+ESTAT: FET EN LES ACCIONS PRINCIPALS; LES DADES NO PERSISTEIXEN DESPRÉS DE REINICIAR EL SERVIDOR.
+
+QUÈ HI HA FET:
+L'editor crida saveDrawing() des de src/main/resources/static/js/editor.js. Envia el dibuix a /drawings/save, i DrawingController i DrawingService el processen. Es desen automàticament accions com afegir o eliminar figures, dibuixar i modificar-les.
+
+QUÈ HAS DE FER:
+1. Prova que afegir, moure, canviar el color o la mida i eliminar una figura desi els canvis.
+2. Comprova que els canvis es veuen en tornar a obrir el dibuix.
+3. En connectar la base de dades (pas 6), comprova també que continuïn disponibles després de reiniciar l'aplicació.
+No cal afegir un temporitzador si el desament per cada canvi funciona correctament.
+
+PAS 2 - GUARDAR I CONSULTAR L'HISTORIAL DE VERSIONS
+
+ENUNCIAT:
+"Cada vegada que es guarda una imatge, s'emmagatzema també la versió anterior, de manera que tindrem un historial dels canvis que hem fet. Aquestes versions s'han de poder consultar quan es veu o s'edita la imatge. Cada imatge té sempre una versió «actual», que és la darrera de totes."
+
+ESTAT: PENDENT.
+
+QUÈ HAS DE FER I COM:
+1. Abans d'actualitzar un dibuix, desa una còpia del seu estat actual com una versió històrica.
+2. Distingueix el dibuix actual de les seves versions anteriors. La versió actual ha de ser la més recent.
+3. Desa per a cada versió les dades necessàries per reconstruir el dibuix: nom, figures, amplada i alçada.
+4. Afegeix a la vista de l'historial o a l'editor una manera de consultar les versions, per exemple, una llista ordenada de la més nova a la més antiga.
+
+A l'estat actual hi ha createdAt i updatedAt a Drawing, però només indiquen dates del dibuix; no hi ha una col·lecció de versions ni una pantalla per consultar-les.
+
+PAS 3 - RECUPERAR UNA VERSIÓ ANTERIOR
+
+ENUNCIAT:
+"L'usuari ha de poder recuperar qualsevol versió anterior de la imatge. Cada versió tindrà una marca de temps (timestamp) associada."
+
+ESTAT: PENDENT.
+
+QUÈ HAS DE FER I COM:
+1. Desa una data i hora per a cada versió quan es crea.
+2. A la llista de versions, afegeix una acció per seleccionar una versió i restaurar-la.
+3. En restaurar-la, copia les seves dades al dibuix actual i desa aquesta modificació. Conserva també l'historial previ; no esborris les versions posteriors.
+4. Mostra la data i hora perquè l'usuari pugui distingir les versions.
+
+PAS 4 - ELIMINAR LES VERSIONS QUAN S'ELIMINA UN DIBUIX
+
+ENUNCIAT:
+"Quan s'esborra una imatge, també s'esborren totes les seves versions anteriors."
+
+ESTAT: PENDENT, PERQUÈ ENCARA NO HI HA HISTORIAL DE VERSIONS.
+
+QUÈ HAS DE FER I COM:
+Quan s'implementi l'eliminació definitiva d'un dibuix, elimina també totes les seves versions. Si les versions es guarden en una taula separada, cerca-les pel dibuix corresponent i elimina-les, o configura una relació a la base de dades que les elimini en esborrar el dibuix. Tingues en compte que moure un dibuix a la paperera (pas 5) no és una eliminació definitiva.
+
+PAS 5 - PAPERERA I ELIMINACIÓ DEFINITIVA
+
+ENUNCIAT:
+"Quan l'usuari esborra una imatge, aquesta no s'eliminarà de la base de dades, sinó que va a la paperera de l'usuari. L'usuari pot decidir eliminar definitivament la imatge si l'esborra també de la paperera."
+
+ESTAT: PENDENT.
+
+QUÈ HAS DE FER I COM:
+1. Afegeix al dibuix un estat que indiqui si és a la paperera.
+2. L'acció Eliminar de la llista ha de marcar el dibuix com a paperera, no esborrar-lo.
+3. Afegeix una vista de paperera per mostrar els dibuixos eliminats de l'usuari.
+4. Des d'aquesta vista, permet restaurar un dibuix o eliminar-lo definitivament.
+5. En eliminar-lo definitivament, elimina també les seves versions, com demana el pas 4.
+
+Ara mateix DrawingService.deleteDrawing() elimina el dibuix del repositori que hi ha a memòria; no existeix una paperera ni una opció de restauració.
+
+PAS 6 - DESAR LES DADES A MYSQL
+
+ENUNCIAT:
+"La informació en el servidor s'emmagatzemarà a una base de dades mysql. Així, cada vegada que s'inicii l'aplicació al servidor no perdem les dades."
+
+ESTAT: PENDENT; HI HA CONFIGURACIÓ DE MYSQL, PERÒ ELS REPOSITORIS ACTUALS DESEN LES DADES EN MEMÒRIA.
+
+QUÈ HAS DE FER I COM:
+1. Crea les taules necessàries per als usuaris, dibuixos i, més endavant, versions, paperera i permisos.
+2. Implementa les operacions dels repositoris amb JdbcTemplate: consultar, inserir, actualitzar i eliminar registres.
+3. Substitueix les llistes ArrayList de UserRepoImpl i DrawingRepoImpl per consultes a la base de dades.
+4. Comprova que els dibuixos i els usuaris continuen existint després de reiniciar l'aplicació.
+
+Ja hi ha la dependència JDBC, la configuració de connexió a src/main/resources/application.properties i un servei MySQL a docker-compose.yml. Això prepara la connexió, però no és persistència: UserRepoImpl i DrawingRepoImpl encara guarden els objectes en llistes de Java.
+
+PAS 7 - COMPARTIR DIBUIXOS EN LECTURA O ESCRIPTURA
+
+ENUNCIAT:
+"Les imatges es podran compartir en mode «lectura» i «escriptura». És a dir, un usuari només podrà veure les imatges que siguin «públiques» (compartides a tothom) o s'hagin compartit directament amb ell."
+
+ESTAT: PARCIAL. ES PODEN VEURE DIBUIXOS D'ALTRES USUARIS, PERÒ NO HI HA COMPARTICIÓ SELECTIVA NI MODES DE PERMÍS.
+
+QUÈ HAS DE FER I COM:
+1. Permet que el propietari marqui un dibuix com a privat o públic i que el comparteixi amb usuaris concrets.
+2. Desa aquesta informació a la base de dades.
+3. Modifica l'historial perquè cada usuari només vegi els seus dibuixos i els dibuixos públics o compartits amb ell.
+4. Mostra o amaga les accions d'edició segons el permís de cada usuari.
+
+Ara la pàgina history.html mostra els dibuixos dels altres usuaris en general, i l'editor els obre com a només lectura. Això no equival a compartir-los amb usuaris autoritzats.
+
+PAS 8 - APLICAR ELS PERMISOS
+
+ENUNCIAT:
+"Hi haurà un sistema de permisos (lectura/escriptura) sobre cada imatge compartida. Els usuaris que tinguin permís d'escriptura podran esborrar i modificar la imatge."
+
+ESTAT: PARCIAL. EL PROPIETARI POT EDITAR I ELS ALTRES USUARIS NOMÉS PODEN VEURE; FALTEN PERMISOS CONFIGURABLES.
+
+QUÈ HAS DE FER I COM:
+1. Quan es comparteix un dibuix, desa si cada usuari té permís de lectura o d'escriptura.
+2. Abans de mostrar o modificar un dibuix, comprova el permís al servidor. No confiïs només a amagar botons a la pàgina.
+3. Permet als usuaris amb permís d'escriptura modificar i esborrar el dibuix, tal com demana l'enunciat.
+4. Permet als usuaris amb permís de lectura consultar-lo, però no canviar-lo.
+
+DrawingController i DrawingService ja comproven el propietari per a algunes operacions, i editor.html mostra un editor de només lectura per als dibuixos d'altres usuaris. Falta suportar escriptors compartits que no siguin propietaris i aplicar el permís a totes les accions.
+
+PAS 9 - NOMÉS EL PROPIETARI POT COMPARTIR
+
+ENUNCIAT:
+"Només podran compartir les imatges els «propietaris» de les imatges. És a dir, un usuari no podrà compartir amb altres usuaris una imatge que no sigui seva."
+
+ESTAT: PENDENT; ENCARA NO HI HA FUNCIONALITAT PER COMPARTIR.
+
+QUÈ HAS DE FER I COM:
+Quan afegeixis les opcions de compartir, comprova al servidor que l'usuari de la sessió és el propietari del dibuix abans de crear o canviar permisos. Si no n'és el propietari, rebutja l'operació. No és suficient ocultar el botó a la interfície.
+
+PAS 10 - FER CÒPIES DE DIBUIXOS
+
+ENUNCIAT:
+"Un usuari ha de poder fer còpies de les imatges (no s'inclou l'historial) d'una imatge qualsevol (sigui seva o compartida)."
+
+ESTAT: PENDENT.
+
+QUÈ HAS DE FER I COM:
+1. Afegeix una acció per copiar un dibuix propi o un dibuix que l'usuari pugui veure.
+2. Crea un dibuix nou amb un identificador nou i amb les figures i dimensions copiades.
+3. Assigna la còpia a l'usuari que l'ha creada; no copiïs l'historial ni els permisos del dibuix original.
+4. Comprova que la còpia es pugui editar sense modificar l'original.
+
+PAS 11 - PRIVACITAT PER DEFECTE
+
+ENUNCIAT:
+"Per defecte, una imatge creada per un usuari és privada (és a dir, només visible i editable pel propi usuari)."
+
+ESTAT: PENDENT. ACTUALMENT, L'HISTORIAL MOSTRA ELS DIBUIXOS DELS ALTRES USUARIS.
+
+QUÈ HAS DE FER I COM:
+1. Quan es crea un dibuix, marca'l com a privat.
+2. Només el propietari l'ha de veure fins que decideixi compartir-lo o fer-lo públic.
+3. Fes que el servidor també comprovi la privacitat en obrir, editar, esborrar i compartir un dibuix.
+4. Revisa la llista de dibuixos d'altres usuaris: no ha de mostrar dibuixos privats.
+
+REQUISITS GENERALS DE TECNOLOGIA I ARQUITECTURA
+
+ENUNCIAT:
+"L'aplicació ha d'estar programada emprant spring-web, tal com s'ha explicat a classe. La capa de persistència (base de dades) es farà mitjançant JDBCTemplate."
+
+ESTAT: SPRING WEB, FET; JdbcTemplate, PENDENT.
+
+QUÈ HAS DE FER:
+Ja s'utilitzen controladors Spring i plantilles Thymeleaf. Conserva aquesta estructura i implementa la capa de persistència amb JdbcTemplate, separada en repositoris. Organitza les responsabilitats entre controladors, serveis, models i repositoris.
+
+SESSIONS I USUARIS
+
+ENUNCIAT:
+"Heu d'emprar l'objecte sessió (HttpSession) per assegurar que cada usuari pot manipular els seus propis dibuixos."
+
+ESTAT: PARCIAL.
+
+QUÈ HI HA FET I QUÈ FALTA:
+LoginController i DrawingController fan servir HttpSession per identificar l'usuari. El servei també comprova el propietari en algunes accions. Quan hi afegeixis paperera, compartició i còpies, assegura't de comprovar els drets de l'usuari a totes les operacions, especialment al servidor.
+
+ASPECTE VISUAL
+
+ENUNCIAT:
+"Es valorarà que cuideu l'aspecte estètic del resultat. Us aconsello utilitzar bootstrap."
+
+ESTAT: HI HA ESTILS PROPIS; BOOTSTRAP ÉS UNA RECOMANACIÓ, NO UN REQUISIT OBLIGATORI.
+
+QUÈ HAS DE FER:
+Prova les pantalles en diferents mides i millora'n la consistència visual. Si t'ajuda, pots utilitzar Bootstrap, però no cal refer el disseny si ja és clar i funciona bé.
+
+LLIURAMENT FINAL
+
+ENUNCIAT:
+"La pràctica s'ha de lliurar mitjançant un arxiu comprimit on hi ha el projecte preparat per ésser obert amb INTELLIJ IDEA i un document adjunt en format PDF on s'explica el funcionament de l'aplicació i també es fa una descripció de la seva arquitectura (classes, patrons, dependències, etc.)."
+
+QUÈ HAS DE FER:
+1. Comprova que el projecte s'obre i es pot executar des d'IntelliJ IDEA.
+2. Prepara un PDF que expliqui com s'utilitza l'aplicació i descrigui les classes principals, els patrons d'arquitectura i les dependències.
+3. Comprimeix el projecte i el PDF en un arxiu de lliurament.
+4. Abans d'entregar, executa i prova les funcionalitats principals.
+
+ENUNCIAT:
+"És important que feu ús dels patrons vists a classe per organitzar l'arquitectura de l'aplicació."
+
+QUÈ HAS DE FER:
+Mantén les responsabilitats ben separades. Per exemple, deixa les peticions web als controladors, les regles de negoci als serveis i l'accés a MySQL als repositoris. Explica al PDF els patrons i les decisions d'arquitectura que realment hagis utilitzat.
