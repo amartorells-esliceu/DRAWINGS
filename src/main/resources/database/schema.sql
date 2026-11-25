@@ -1,5 +1,3 @@
--- Aquest script s'executa en iniciar Spring Boot.
-
 CREATE TABLE IF NOT EXISTS users (
     username VARCHAR(20) PRIMARY KEY NOT NULL,
     name VARCHAR(50) NOT NULL,

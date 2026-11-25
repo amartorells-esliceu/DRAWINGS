@@ -3,5 +3,6 @@
   <component name="DataSourcePerFileMappings">
     <file url="file://$PROJECT_DIR$/src/main/java/cat/liceu/drawings/repo/UserRepoImpl.java" value="8f5bf8d4-d766-4624-8980-3eac6e524bb1" />
     <file url="file://$PROJECT_DIR$/src/main/resources/database/data.sql" value="8f5bf8d4-d766-4624-8980-3eac6e524bb1" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/database/schema.sql" value="8f5bf8d4-d766-4624-8980-3eac6e524bb1" />
   </component>
 </project>

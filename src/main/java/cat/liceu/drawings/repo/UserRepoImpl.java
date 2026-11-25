@@ -18,7 +18,7 @@ public class UserRepoImpl implements UserRepo {
     public User findByUsername(String username) {
         try {
             return jdbcTemplate.queryForObject(
-                    "SELECT name, username, password FROM users WHERE username = ?",
+                    "SELECT * FROM users WHERE username = ?",
                     (resultSet, rowNumber) -> new User(
                             resultSet.getString("name"),
                             resultSet.getString("username"),
