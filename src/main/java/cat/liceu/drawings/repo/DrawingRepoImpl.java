@@ -1,6 +1,7 @@
 package cat.liceu.drawings.repo;
 
 import cat.liceu.drawings.models.Drawing;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -9,7 +10,12 @@ import java.util.List;
 @Repository
 public class DrawingRepoImpl implements DrawingRepo {
 
-    private final List<Drawing> drawings = new ArrayList<>();
+    //private final List<Drawing> drawings = new ArrayList<>();
+    private final JdbcTemplate jdbcTemplate;
+
+    public DrawingRepoImpl(JdbcTemplate jdbcTemplate){
+        this.jdbcTemplate = jdbcTemplate;
+    }
 
     @Override
     public void save(Drawing drawing) {
